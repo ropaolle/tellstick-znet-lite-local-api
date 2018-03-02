@@ -39,6 +39,8 @@ function parseDevices ({ command, id, level }) {
     case 'turnOff':
     case 'history':
       return `device/${command}?id=${id}`
+    default:
+      return null
   }
 }
 
@@ -47,7 +49,7 @@ function parseDevices ({ command, id, level }) {
  *
  * command: info
  */
-function parseSensors ({ command, id, level }) {
+function parseSensors ({ command, id }) {
   // List all sensors
   if (!id) {
     return `sensors/list?includeValues=${INCLUDE_VALUES}`
@@ -57,6 +59,8 @@ function parseSensors ({ command, id, level }) {
   switch (command) {
     case 'info':
       return `sensor/${command}?id=${id}`
+    default:
+      return null
   }
 }
 
@@ -74,6 +78,8 @@ function parseTokens ({ command, token }) {
       return token && `token?token=${token}`
     case 'refresh':
       return `refreshToken`
+    default:
+      return null
   }
 }
 
@@ -85,5 +91,7 @@ module.exports.parseAll = function (request) {
       return parseSensors(request)
     case 'token':
       return parseTokens(request)
+    default:
+      return null
   }
 }

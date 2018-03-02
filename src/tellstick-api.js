@@ -14,7 +14,6 @@ let auth = require('./auth.json')
 function updateAuth (body) {
   fs.writeFile(AUTH_PATH, JSON.stringify({ ...auth, ...body }, null, 4), (err) => {
     if (err) throw err
-    console.log('Tokens have been udated!')
   })
 }
 
@@ -31,21 +30,22 @@ function getHeaders ({ type, command }) {
     }
   }
 
-  // Token options
-  if (type === 'token') {
-    if (command === 'new') {
-      result.method = 'PUT'
-      result.options.headers = {
-        'content-type': 'application/x-www-form-urlencoded'
-      }
-      result.options.payload = Querystring.stringify({ app: 'tzll' })
-    } else if (command === 'access') {
-      delete result.options.headers
+  if (type === 'token' && command === 'new') {
+    result.method = 'PUT'
+    result.options = {
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      payload: Querystring.stringify({ app: 'tzll' })
     }
   }
 
+  if (type === 'token' && command === 'access') { delete result.options.headers }
+
   return result
 }
+
+// async function callApiSend (request) {
+//   // ?
+// }
 
 module.exports.callApi = async function (request) {
   const result = {

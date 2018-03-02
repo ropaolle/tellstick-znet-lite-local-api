@@ -6,7 +6,7 @@
 [![David badge](https://david-dm.org/ropaolle/tellstick-znet-lite-local-api.svg)](https://david-dm.org/ropaolle/tellstick-znet-lite-local-api)
 [![DevDependencies](https://img.shields.io/david/dev/ropaolle/tellstick-znet-lite-local-api.svg)](https://david-dm.org/ropaolle/tellstick-znet-lite-local-api#info=devDependencies&view=list)
 
-[![Known Vulnerabilities](https://snyk.io/test/github/ropaolle/tellstick-znet-lite-local-api/badge.svg)](https://snyk.io/test/github/ropaolle/tellstick-znet-lite-local-api) 
+[![Known Vulnerabilities](https://snyk.io/test/github/ropaolle/tellstick-znet-lite-local-api/badge.svg)](https://snyk.io/test/github/ropaolle/tellstick-znet-lite-local-api)
 
 ## Version 17
 [Getting started](https://github.com/sfabriece/hapijs.com/blob/aecc38766cf3c8e16e99e060b05d9c4e57bf0c7d/lib/tutorials/en_US/getting-started.md)
