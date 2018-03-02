@@ -1,7 +1,7 @@
-let authorization = require('./authorization.json')
+'use strict'
 
 /**
- * Methods
+ * Constants
  */
 const TELLSTICK_TURNON = 1
 const TELLSTICK_TURNOFF = 2
@@ -14,40 +14,8 @@ const TELLSTICK_DIM = 16
 // const TELLSTICK_DOWN = 256
 // const TELLSTICK_STOP = 512
 
-/**
- * Constants
- */
 const SUPPORTED_METHODS = TELLSTICK_TURNON + TELLSTICK_TURNOFF + TELLSTICK_DIM
 const INCLUDE_VALUES = 1
-
-function getOptions ({ type, command }) {
-  // Basic options
-  let result = {
-    method: 'GET',
-    uri: '/api/',
-    options: {
-      baseUrl: 'http://192.168.10.104/',
-      headers: {
-        authorization: `Bearer ${authorization.accessToken}`,
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET'
-      }
-    }
-  }
-
-  // Token options
-  if (type === 'token') {
-    if (command === 'new') {
-      result.options.method = 'PUT'
-      result.options.form = { app: 'tzll' }
-      delete result.options.headers
-    } else if (command === 'access') {
-      delete result.options.headers
-    }
-  }
-
-  return result
-}
 
 /**
  * Device query's
@@ -106,12 +74,10 @@ function parseTokens ({ command, token }) {
       return token && `token?token=${token}`
     case 'refresh':
       return `refreshToken`
-    // case 'info':
-    //   return `tokenInfo`
   }
 }
 
-function parseAll (request) {
+module.exports.parseAll = function (request) {
   switch (request.type) {
     case 'devices':
       return parseDevices(request)
@@ -120,12 +86,4 @@ function parseAll (request) {
     case 'token':
       return parseTokens(request)
   }
-}
-
-module.exports.parse = function parse (request) {
-  // const parsed = parseAll(request)
-  const options = getOptions(request)
-  options.uri = `/api/${parseAll(request)}`
-  console.log(options)
-  return 'options'
 }

@@ -1,38 +1,50 @@
-const Wreck = require('wreck')
-const tellstick = require('./tellstick')
-let authorization = require('./authorization.json')
+'use strict'
 
-// const method = 'PUT' // GET
-// const uri = '/api/devices/list?supportedMethods=19'
-// const uri = '/api/token'
+const Hapi = require('hapi')
+const tellstick = require('./tellstick-api')
 
-const wreck = Wreck.defaults({})
+const server = new Hapi.Server({
+  port: 3000,
+  host: 'localhost' // 192.168.10.146
+})
 
-// const options = {
-//   baseUrl: 'http://192.168.10.104/',
-//   form: { app: 'tzll' }
-//   // headers: {
-//   //   authorization: `Bearer ${authorization.accessToken}`,
-//   //   'Access-Control-Allow-Origin': '*',
-//   //   'Access-Control-Allow-Methods': 'GET'
-//   // }
-// }
+server.route({
+  method: 'GET',
+  path: '/{version}/token/{command?}',
+  handler: async (request, h) => {
+    const result = await tellstick.callApi({
+      type: 'token',
+      ...request.params,
+      ...request.query
+    })
 
-// if (['accessToken', 'requestToken'].includes(query.command)) {
-//   delete options.headers
-// }
-
-const example = async function () {
-  const { method, uri, options } = tellstick.parse({})
-
-  const promise = wreck.request(method, uri, options)
-  try {
-    const res = await promise
-    const body = await Wreck.read(res, { json: true })
-    console.log(body)
-  } catch (err) {
-    // Handle errors
+    return `Token: ${JSON.stringify(result)}`
   }
-}
+})
 
-example()
+server.route({
+  method: 'GET',
+  path: '/{version}/{type}/{id?}',
+  handler: async (request, h) => {
+    const result = await tellstick.callApi({
+      ...request.params,
+      ...request.query
+    })
+
+    server.log({ ...request.params, ...request.query, ...result })
+    return `Token: ${JSON.stringify(result)}`
+  }
+})
+
+server.events.on('log', (event) => {
+  console.log('HAPI LOGG', JSON.stringify(event.tags.pop()))
+})
+
+server
+  .start()
+  .then(() => {
+    console.log(`Server running at: ${server.info.uri}`)
+  })
+  .catch(err => {
+    console.error(err)
+  })

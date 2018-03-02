@@ -20,6 +20,6 @@
     "nodemon": "^1.14.11"
   },
   "scripts": {
-    "start": "BROWSER=none nodemon src/app.js"
+    "start": "BROWSER=none nodemon src/api.js"
   }
 }
