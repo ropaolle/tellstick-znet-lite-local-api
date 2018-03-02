@@ -12,7 +12,7 @@ const AUTH_PATH = `${__dirname}/auth.json`
 let auth = require('./auth.json')
 
 function updateAuth (body) {
-  fs.writeFile(AUTH_PATH, JSON.stringify({ ...auth, ...body }, null, 4), (err) => {
+  fs.writeFile(AUTH_PATH, JSON.stringify({ ...auth, ...body }, null, 4), err => {
     if (err) throw err
   })
 }
@@ -38,22 +38,20 @@ function getHeaders ({ type, command }) {
     }
   }
 
-  if (type === 'token' && command === 'access') { delete result.options.headers }
+  if (type === 'token' && command === 'access') {
+    delete result.options.headers
+  }
 
   return result
 }
 
-// async function callApiSend (request) {
-//   // ?
-// }
+const DEFAULT_RESULT = {
+  success: false,
+  expires: auth.expires, // new Date(auth.expires * 1000).toString()
+  allowRenew: auth.allowRenew
+}
 
 module.exports.callApi = async function (request) {
-  const result = {
-    success: false,
-    expires: auth.expires, // new Date(auth.expires * 1000).toString()
-    allowRenew: auth.allowRenew
-  }
-
   // Insert access token
   if (request.type === 'token' && request.command === 'access') {
     request.token = auth.token
@@ -61,35 +59,32 @@ module.exports.callApi = async function (request) {
 
   const parsedCommand = tellstick.parseAll(request)
 
-  if (parsedCommand) {
-    const uri = `${API_PATH}/${parsedCommand}`
-    const { method, options } = getHeaders(request)
+  if (!parsedCommand) return DEFAULT_RESULT
 
-    const promise = Wreck.request(method, uri, options)
+  const uri = `${API_PATH}/${parsedCommand}`
+  const { method, options } = getHeaders(request)
+  const promise = Wreck.request(method, uri, options)
 
-    try {
-      const res = await promise
-      // json: 'strict' returns an error in case of none json resonse.
-      const body = await Wreck.read(res, { json: 'strict' })
+  try {
+    const res = await promise
+    // json: 'strict' returns an error in case of none json resonse.
+    const body = await Wreck.read(res, { json: 'strict' })
 
-      // Save tokens
-      if (request.type === 'token' && body.token) {
-        updateAuth(body)
-      }
+    // Save tokens
+    if (request.type === 'token' && body.token) {
+      updateAuth(body)
+    }
 
-      return {
-        ...result,
-        success: !body.error,
-        message: (body.error) ? body.error : body
-      }
-    } catch (err) {
-      return {
-        ...result,
-        message: err.message,
-        errorCode: err.output.statusCode
-      }
+    return {
+      ...DEFAULT_RESULT,
+      success: !body.error,
+      message: body.error ? body.error : body
+    }
+  } catch (err) {
+    return {
+      ...DEFAULT_RESULT,
+      message: err.message,
+      errorCode: err.output.statusCode
     }
   }
-
-  return result
 }

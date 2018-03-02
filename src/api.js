@@ -8,38 +8,32 @@ const server = new Hapi.Server({
   host: 'localhost' // 192.168.10.146
 })
 
+async function callApi (params) {
+  const result = await tellstick.callApi(params)
+
+  server.log({ ...params, ...result })
+  return `Token: ${JSON.stringify(result)}`
+}
+
 server.route({
   method: 'GET',
   path: '/{version}/token/{command?}',
-  handler: async (request) => {
-    const result = await tellstick.callApi({
-      type: 'token',
-      ...request.params,
-      ...request.query
-    })
-
-    server.log({ ...request.params, ...request.query, ...result })
-    return `Token: ${JSON.stringify(result)}`
+  handler: async request => {
+    return callApi({ type: 'token', ...request.params, ...request.query })
   }
 })
 
 server.route({
   method: 'GET',
   path: '/{version}/{type}/{id?}',
-  handler: async (request) => {
-    const result = await tellstick.callApi({
-      ...request.params,
-      ...request.query
-    })
-
-    server.log({ ...request.params, ...request.query, ...result })
-    return `Token: ${JSON.stringify(result)}`
+  handler: async request => {
+    return callApi({ ...request.params, ...request.query })
   }
 })
 
-server.events.on('log', (event) => {
-  // console.log('HAPI LOGG', JSON.stringify(event.tags.pop()))
-})
+// server.events.on('log', (event) => {
+//   console.log('HAPI LOGG', JSON.stringify(event.tags.pop()))
+// })
 
 server
   .start()
