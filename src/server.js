@@ -2,8 +2,6 @@
 
 const Hapi = require('hapi')
 const tellstick = require('./tellstick-api')
-const a = require('./auth')
-console.log(a)
 
 const server = new Hapi.Server({
   port: 3000,
@@ -14,39 +12,46 @@ const server = new Hapi.Server({
 //   console.log('HAPI LOGG', JSON.stringify(event.tags.pop()))
 // })
 
-async function callApi (params) {
-  const result = await tellstick.callApi(params)
+server.route({
+  method: 'GET',
+  path: '/{version}',
+  handler: async (request, h) => {
+    const version = request.params.version
 
-  server.log({ ...params, ...result })
-  return `Token: ${JSON.stringify(result)}`
-}
+    return h.response(version).code((version === 'v1') ? 200 : 404)
+  }
+})
 
 server.route({
   method: 'GET',
   path: '/{version}/token/{command?}',
-  handler: async request => {
-    return callApi({ type: 'token', ...request.params, ...request.query })
+  handler: async (request, h) => {
+    const params = { type: 'token', ...request.params, ...request.query }
+    const result = await tellstick.callApi(params)
+
+    return h.response(result)
   }
 })
 
 server.route({
   method: 'GET',
   path: '/{version}/{type}/{id?}',
-  handler: async request => {
-    return callApi({ ...request.params, ...request.query })
+  handler: async (request, h) => {
+    const params = { ...request.params, ...request.query }
+    const result = await tellstick.callApi(params)
+
+    return h.response(result)
   }
 })
 
-// TODO: Do not start the server during tests. What is best practis?
-if (process.env.NODE_ENV !== 'test') {
-  server
-    .start()
-    .then(() => {
-      return console.log(`Server running at: ${server.info.uri}`)
-    })
-    .catch(err => {
-      console.error(err)
-    })
-}
+server
+  .start()
+  .then(() => {
+    return console.log(`Server running at: ${server.info.uri}`)
+  })
+  .catch(err => {
+    console.error(err)
+  })
 
+// Used by tests
 module.exports = server

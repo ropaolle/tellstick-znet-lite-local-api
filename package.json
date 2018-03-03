@@ -23,8 +23,7 @@
   },
   "scripts": {
     "start": "node src/server.js",
-    "test": "lab -v",
-    "test-cov": "lab --assert code --coverage -v",
+    "test": "lab -t 90 --assert code -v",
     "test-cov-html": "lab -r html -o coverage.html"
   }
 }

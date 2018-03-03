@@ -1,31 +1,36 @@
 'use strict'
 
 const Wreck = require('wreck')
-// const fs = require('fs')
 const Querystring = require('querystring')
+const fs = require('fs')
 const tellstick = require('./tellstick-parse')
 
-const API_URL = 'http://192.168.10.104/'
+const API_URL = 'http://192.168.10.1044/'
 const API_PATH = '/api'
-// const AUTH_PATH = `${__dirname}/auth.json`
 
-// let auth = require('./auth.json')
+let auth = require('./auth.json')
+const AUTH_PATH = `${__dirname}/auth.json`
 
-// function updateAuth (body) {
-//   fs.writeFile(AUTH_PATH, JSON.stringify({ ...auth, ...body }, null, 4), err => {
-//     if (err) throw err
-//   })
-// }
+function updateToken (data) {
+  // Convert Unix timestamp to datetime
+  if (data.expires) { data.expires = data.expires * 1000 }
+  auth = { ...auth, ...data, updated: Date.now() }
 
-let auth2 = require('./auth')
+  fs.writeFile(AUTH_PATH, JSON.stringify(auth, null, 4), err => {
+    if (err) throw err
+  })
+}
 
-function getHeaders ({ type, command }) {
+function getHeaders ({ type, command }, parsedCommand) {
+  if (!parsedCommand) return {}
+
   let result = {
     method: 'GET',
+    url: `${API_PATH}/${parsedCommand}`,
     options: {
       baseUrl: API_URL,
       headers: {
-        authorization: `Bearer ${auth2.tokens.token}`,
+        authorization: `Bearer ${auth.token}`,
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET'
       }
@@ -34,10 +39,8 @@ function getHeaders ({ type, command }) {
 
   if (type === 'token' && command === 'new') {
     result.method = 'PUT'
-    result.options = {
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      payload: Querystring.stringify({ app: 'tzll' })
-    }
+    result.options.headers = { 'content-type': 'application/x-www-form-urlencoded' }
+    result.options.payload = Querystring.stringify({ app: 'tzll' })
   }
 
   if (type === 'token' && command === 'access') {
@@ -49,35 +52,29 @@ function getHeaders ({ type, command }) {
 
 const DEFAULT_RESULT = {
   success: false,
-  expires: auth2.tokens.expires, // new Date(auth.expires * 1000).toString()
-  allowRenew: auth2.tokens.allowRenew
+  expires: auth.expires,
+  allowRenew: auth.allowRenew
 }
 
 module.exports.callApi = async function (request) {
   // Insert access token
   if (request.type === 'token' && request.command === 'access') {
-    request.token = auth2.tokens.token
+    request.token = auth.token
   }
 
-  const parsedCommand = tellstick.parseAll(request)
-  console.log('Parsed', parsedCommand)
-  if (!parsedCommand) return DEFAULT_RESULT
+  let { method, options, url } = getHeaders(request, tellstick.parseAll(request))
+  if (!url) { return DEFAULT_RESULT }
 
-  const uri = `${API_PATH}/${parsedCommand}`
-  const { method, options } = getHeaders(request)
-
-  console.log('Wreck', method, uri, options)
-
-  const promise = Wreck.request(method, uri, options)
+  const promise = Wreck.request(method, url, options)
 
   try {
     const res = await promise
     // json: 'strict' returns an error in case of none json resonse.
     const body = await Wreck.read(res, { json: 'strict' })
-    console.log('Body', body)
+
     // Save tokens
     if (request.type === 'token' && body.token) {
-      auth2.updateToken(body)
+      updateToken(body)
     }
 
     return {
