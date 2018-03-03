@@ -58,7 +58,7 @@ module.exports.callApi = async function (request) {
   }
 
   const parsedCommand = tellstick.parseAll(request)
-
+  console.log('P', parsedCommand)
   if (!parsedCommand) return DEFAULT_RESULT
 
   const uri = `${API_PATH}/${parsedCommand}`
