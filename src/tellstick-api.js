@@ -5,7 +5,7 @@ const Querystring = require('querystring')
 const fs = require('fs')
 const tellstick = require('./tellstick-parse')
 
-const API_URL = 'http://192.168.10.1044/'
+const API_URL = 'http://192.168.10.104/'
 const API_PATH = '/api'
 
 let auth = require('./auth.json')
