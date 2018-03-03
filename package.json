@@ -20,8 +20,9 @@
     "lab": "^15.3.0"
   },
   "scripts": {
-    "start": "BROWSER=none src/api.js",
-    "test": "lab -t 100",
+    "start": "BROWSER=none src/server.js",
+    "test": "lab -v",
+    "test-cov": "lab --assert code --coverage -v",
     "test-cov-html": "lab -r html -o coverage.html"
   }
 }

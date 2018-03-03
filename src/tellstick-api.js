@@ -10,6 +10,7 @@ const API_PATH = '/api'
 const AUTH_PATH = `${__dirname}/auth.json`
 
 let auth = require('./auth.json')
+// let auth2 = require('./auth2.json')
 
 function updateAuth (body) {
   fs.writeFile(AUTH_PATH, JSON.stringify({ ...auth, ...body }, null, 4), err => {
