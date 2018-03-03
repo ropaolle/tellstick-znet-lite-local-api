@@ -7,19 +7,23 @@
   },
   "license": "MIT",
   "dependencies": {
-    "chalk": "^2.3.0",
+    "file-exists": "^5.0.1",
+    "fs": "0.0.1-security",
     "hapi": "^17.2.1"
   },
   "devDependencies": {
+    "code": "^5.2.0",
     "eslint": "^4.18.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
-    "nodemon": "^1.14.11"
+    "lab": "^15.3.0"
   },
   "scripts": {
-    "start": "BROWSER=none nodemon src/api.js"
+    "start": "node src/server.js",
+    "test": "lab -t 90 --assert code -v",
+    "test-cov-html": "lab -r html -o coverage.html"
   }
 }
