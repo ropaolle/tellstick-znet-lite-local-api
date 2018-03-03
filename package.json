@@ -7,6 +7,8 @@
   },
   "license": "MIT",
   "dependencies": {
+    "file-exists": "^5.0.1",
+    "fs": "0.0.1-security",
     "hapi": "^17.2.1"
   },
   "devDependencies": {
@@ -20,7 +22,7 @@
     "lab": "^15.3.0"
   },
   "scripts": {
-    "start": "BROWSER=none src/server.js",
+    "start": "node src/server.js",
     "test": "lab -v",
     "test-cov": "lab --assert code --coverage -v",
     "test-cov-html": "lab -r html -o coverage.html"

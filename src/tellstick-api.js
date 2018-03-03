@@ -1,22 +1,23 @@
 'use strict'
 
 const Wreck = require('wreck')
-const fs = require('fs')
+// const fs = require('fs')
 const Querystring = require('querystring')
 const tellstick = require('./tellstick-parse')
 
 const API_URL = 'http://192.168.10.104/'
 const API_PATH = '/api'
-const AUTH_PATH = `${__dirname}/auth.json`
+// const AUTH_PATH = `${__dirname}/auth.json`
 
-let auth = require('./auth.json')
-// let auth2 = require('./auth2.json')
+// let auth = require('./auth.json')
 
-function updateAuth (body) {
-  fs.writeFile(AUTH_PATH, JSON.stringify({ ...auth, ...body }, null, 4), err => {
-    if (err) throw err
-  })
-}
+// function updateAuth (body) {
+//   fs.writeFile(AUTH_PATH, JSON.stringify({ ...auth, ...body }, null, 4), err => {
+//     if (err) throw err
+//   })
+// }
+
+let auth2 = require('./auth')
 
 function getHeaders ({ type, command }) {
   let result = {
@@ -24,7 +25,7 @@ function getHeaders ({ type, command }) {
     options: {
       baseUrl: API_URL,
       headers: {
-        authorization: `Bearer ${auth.token}`,
+        authorization: `Bearer ${auth2.tokens.token}`,
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET'
       }
@@ -48,32 +49,35 @@ function getHeaders ({ type, command }) {
 
 const DEFAULT_RESULT = {
   success: false,
-  expires: auth.expires, // new Date(auth.expires * 1000).toString()
-  allowRenew: auth.allowRenew
+  expires: auth2.tokens.expires, // new Date(auth.expires * 1000).toString()
+  allowRenew: auth2.tokens.allowRenew
 }
 
 module.exports.callApi = async function (request) {
   // Insert access token
   if (request.type === 'token' && request.command === 'access') {
-    request.token = auth.token
+    request.token = auth2.tokens.token
   }
 
   const parsedCommand = tellstick.parseAll(request)
-  console.log('P', parsedCommand)
+  console.log('Parsed', parsedCommand)
   if (!parsedCommand) return DEFAULT_RESULT
 
   const uri = `${API_PATH}/${parsedCommand}`
   const { method, options } = getHeaders(request)
+
+  console.log('Wreck', method, uri, options)
+
   const promise = Wreck.request(method, uri, options)
 
   try {
     const res = await promise
     // json: 'strict' returns an error in case of none json resonse.
     const body = await Wreck.read(res, { json: 'strict' })
-
+    console.log('Body', body)
     // Save tokens
     if (request.type === 'token' && body.token) {
-      updateAuth(body)
+      auth2.updateToken(body)
     }
 
     return {

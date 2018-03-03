@@ -2,6 +2,8 @@
 
 const Hapi = require('hapi')
 const tellstick = require('./tellstick-api')
+const a = require('./auth')
+console.log(a)
 
 const server = new Hapi.Server({
   port: 3000,
@@ -36,15 +38,15 @@ server.route({
 })
 
 // TODO: Do not start the server during tests. What is best practis?
-// if (process.env.NODE_ENV !== 'test') {
-//   server
-//     .start()
-//     .then(() => {
-//       return console.log(`Server running at: ${server.info.uri}`)
-//     })
-//     .catch(err => {
-//       console.error(err)
-//     })
-// }
+if (process.env.NODE_ENV !== 'test') {
+  server
+    .start()
+    .then(() => {
+      return console.log(`Server running at: ${server.info.uri}`)
+    })
+    .catch(err => {
+      console.error(err)
+    })
+}
 
-// module.exports = server
+module.exports = server

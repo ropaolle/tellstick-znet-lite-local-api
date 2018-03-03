@@ -1,16 +1,21 @@
-var fs = require('fs')
-var fileExists = require('file-exists')
+'use strict'
+
+const fs = require('fs')
+let auth = require('./auth.json')
 
 const AUTH_PATH = `${__dirname}/auth.json`
 
-// if(!fileExists(filename)){
-//   fs.writeFileSync(filename, data);
-// }
+function updateToken (data) {
+  const content = {
+    ...auth,
+    ...data,
+    updated: Date.now
+  }
 
-let auth = require('./auth.json')
+  fs.writeFile(AUTH_PATH, JSON.stringify(content, null, 4), err => {
+    if (err) throw err
+  })
+}
 
-// function updateAuth (body) {
-//   fs.writeFile(AUTH_PATH, JSON.stringify({ ...auth, ...body }, null, 4), err => {
-//     if (err) throw err
-//   })
-// }
+module.exports.tokens = auth
+module.exports.updateToken = updateToken
