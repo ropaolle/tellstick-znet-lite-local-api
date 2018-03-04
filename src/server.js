@@ -4,8 +4,10 @@ const Hapi = require('hapi')
 const tellstick = require('./tellstick-api')
 
 const server = new Hapi.Server({
-  port: 3000,
-  host: 'localhost' // 192.168.10.146
+  port: 4000,
+  host: 'localhost',
+  // host: '192.168.10.146'
+  routes: { cors: true }
 })
 
 // server.events.on('log', (event) => {
@@ -18,7 +20,7 @@ server.route({
   handler: async (request, h) => {
     const version = request.params.version
 
-    return h.response(version).code((version === 'v1') ? 200 : 404)
+    return h.response(version).code(version === 'v1' ? 200 : 404)
   }
 })
 
