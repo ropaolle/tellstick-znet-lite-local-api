@@ -1,9 +1,6 @@
 'use strict'
 
-// Test framework https://github.com/hapijs/lab
 const { experiment, it } = (exports.lab = require('lab').script())
-
-// Assertion https://github.com/hapijs/code/blob/master/API.md
 const { expect } = require('code')
 
 const tellstick = require('../src/tellstick-api')

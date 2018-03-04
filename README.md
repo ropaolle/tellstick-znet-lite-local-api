@@ -40,6 +40,8 @@ curl -i -X GET http://0.0.0.0/api/refreshToken -H "Authorization: Bearer eyJhbGc
 * [API Referince](https://github.com/hapijs/hapi/blob/master/API.md)
 * [v16 to v17](https://futurestud.io/tutorials/hapi-v17-upgrade-guide-your-move-to-async-await)
 * [Route example](https://github.com/hapijs/discuss/issues/597)
+* [Lab - Test framework](https://github.com/hapijs/lab)
+* [Code - Assertion](https://github.com/hapijs/code/blob/master/API.md)
 
 # PM2
 

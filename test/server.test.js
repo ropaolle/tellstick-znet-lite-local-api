@@ -1,9 +1,8 @@
 'use strict'
 
-// Test framework https://github.com/hapijs/lab
 const { experiment, it } = (exports.lab = require('lab').script())
-// Assertion https://github.com/hapijs/code/blob/master/API.md
 const { expect } = require('code')
+
 const server = require('../src/server')
 
 experiment('server.js', () => {
@@ -31,7 +30,11 @@ experiment('server.js', () => {
   it('Call /v1/devices -> 200', async () => {
     await server.inject({ method: 'GET', url: '/v1/devices' })
       .then(response => {
-        expect(response.statusCode).to.equal(200)
+        return expect(response.statusCode).to.equal(200)
+      }).catch(err => {
+        return expect(err).to.equal(200)
       })
+
+    return true
   })
 })

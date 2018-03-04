@@ -28,6 +28,7 @@ function getHeaders ({ type, command }, parsedCommand) {
     method: 'GET',
     url: `${API_PATH}/${parsedCommand}`,
     options: {
+      timeout: 1000,
       baseUrl: API_URL,
       headers: {
         authorization: `Bearer ${auth.token}`,
