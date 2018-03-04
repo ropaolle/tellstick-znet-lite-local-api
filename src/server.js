@@ -44,13 +44,15 @@ server.route({
   }
 })
 
+// if (!module.parent) {}
+
 server
   .start()
   .then(() => {
     return console.log(`Server running at: ${server.info.uri}`)
   })
   .catch(err => {
-    console.error(err)
+    return console.error('ERR', err)
   })
 
 // Used by tests
