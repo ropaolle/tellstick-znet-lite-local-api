@@ -5,8 +5,8 @@ const tellstick = require('./tellstick-api')
 
 const server = new Hapi.Server({
   port: 4000,
-  host: 'localhost',
-  // host: '192.168.10.146'
+  // host: 'localhost',
+  host: '192.168.10.146',
   routes: { cors: true }
 })
 
