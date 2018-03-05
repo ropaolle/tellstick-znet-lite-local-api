@@ -26,7 +26,7 @@ server.route({
 
 server.route({
   method: 'GET',
-  path: '/{version}/token/{command?}',
+  path: '/{version}/token/{command?}', // TODO: Remove command?
   handler: async (request, h) => {
     const params = { type: 'token', ...request.params, ...request.query }
     const result = await tellstick.callApi(params)
