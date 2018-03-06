@@ -84,7 +84,6 @@ function parseTokens ({ command, token }) {
 }
 
 module.exports.parseAll = function (request) {
-  // console.log('X', request)
   switch (request.type) {
     case 'devices':
       return parseDevices(request)

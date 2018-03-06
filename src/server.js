@@ -1,24 +1,24 @@
 'use strict'
 
 const Hapi = require('hapi')
+const low = require('lowdb')
+const FileAsync = require('lowdb/adapters/FileAsync')
+
 const tellstick = require('./tellstick-api')
 
 const server = new Hapi.Server({
-  port: 4000,
+  // port: 4000,
   // host: 'localhost',
-  host: '192.168.10.146',
+  // host: '192.168.10.146',
   routes: { cors: true }
 })
-
-// server.events.on('log', (event) => {
-//   console.log('HAPI LOGG', JSON.stringify(event.tags.pop()))
-// })
 
 server.route({
   method: 'GET',
   path: '/{version}',
   handler: async (request, h) => {
     const version = request.params.version
+    // const { version } = request.params
 
     return h.response(version).code(version === 'v1' ? 200 : 404)
   }
@@ -26,7 +26,7 @@ server.route({
 
 server.route({
   method: 'GET',
-  path: '/{version}/token/{command?}', // TODO: Remove command?
+  path: '/{version}/token', // TODO: Remove command?
   handler: async (request, h) => {
     const params = { type: 'token', ...request.params, ...request.query }
     const result = await tellstick.callApi(params)
@@ -46,15 +46,22 @@ server.route({
   }
 })
 
-// if (!module.parent) {}
-
-server
-  .start()
-  .then(() => {
-    return console.log(`Server running at: ${server.info.uri}`)
+// Create database instance and start server
+const adapter = new FileAsync('db.json')
+low(adapter)
+  .then(db => {
+    return db.defaults({ port: 4000, favorites: [2, 6] }).write()
   })
-  .catch(err => {
-    return console.error('ERR', err)
+  .then((db) => {
+    server.settings.port = db.port
+    server
+      .start()
+      .then(() => {
+        return console.log(`Server running at: ${server.info.uri}`)
+      })
+      .catch(err => {
+        return console.error('ERR', err)
+      })
   })
 
 // Used by tests
