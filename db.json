@@ -1,7 +1,21 @@
 {
   "port": 4000,
-  "favorites": [
-    2,
-    6
-  ]
+  "token": {
+    "expires": 666,
+    "authUrl": "http://192.168.10.104/api/authorize?token=bcf089ee8176419d877bb951b9f064ec",
+    "requestToken": "bcf089ee8176419d877bb951b9f064ec"
+  },
+  "app": {
+    "expires": 666,
+    "dude1": "oll",
+    "dude2": "lowdb",
+    "favorites": [
+      2,
+      6,
+      666
+    ]
+  },
+  "user": {
+    "name": "typicode"
+  }
 }

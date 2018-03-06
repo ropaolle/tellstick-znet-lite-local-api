@@ -5,67 +5,87 @@ const Querystring = require('querystring')
 const fs = require('fs')
 const tellstick = require('./tellstick-parse')
 
-const API_URL = 'http://192.168.10.104/'
-const API_PATH = '/api'
-
-let auth = require('./auth.json')
+const API_URL = 'http://192.168.10.104/api/'
 const AUTH_PATH = `${__dirname}/auth.json`
 
-function updateToken (data) {
-  // Convert Unix timestamp to datetime
-  if (data.expires) { data.expires = data.expires * 1000 }
-  auth = { ...auth, ...data, updated: Date.now() }
+let auth = require('./auth.json')
+
+function updateAuthFile (request, body) {
+  if (!body || !request) { return }
+
+  switch (request.command) {
+    case 'new':
+      auth.authUrl = body.authUrl
+      auth.requestToken = body.token
+      break
+    case 'access':
+      auth.allowRenew = body.allowRenew
+      auth.expires = body.expires * 1000 // Unix timestamp to datetime
+      auth.accessToken = body.token
+      break
+    case 'refresh':
+      auth.expires = body.expires * 1000
+      auth.accessToken = body.token
+      break
+    default:
+      return
+  }
 
   fs.writeFile(AUTH_PATH, JSON.stringify(auth, null, 4), err => {
     if (err) throw err
   })
 }
 
+const DEFAULT_OPTIONS = {
+  timeout: 1000,
+  baseUrl: API_URL,
+  headers: {
+    authorization: `Bearer ${auth.accessToken}`,
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET'
+  }
+}
+
 function getHeaders ({ type, command }, parsedCommand) {
+  // console.log('getHeader', type, command, parsedCommand)
   if (!parsedCommand) return {}
 
   let result = {
     method: 'GET',
-    url: `${API_PATH}/${parsedCommand}`,
-    options: {
-      timeout: 1000,
-      baseUrl: API_URL,
-      headers: {
-        authorization: `Bearer ${auth.token}`,
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET'
-      }
+    url: parsedCommand,
+    options: DEFAULT_OPTIONS
+  }
+
+  if (type === 'token') {
+    if (command === 'new') {
+      result.method = 'PUT'
+      result.options.headers = { 'content-type': 'application/x-www-form-urlencoded' }
+      result.options.payload = Querystring.stringify({ app: 'tzll' })
+    } else if (command === 'access') {
+      delete result.options.headers // TODO: Is this needed?
     }
-  }
-
-  if (type === 'token' && command === 'new') {
-    result.method = 'PUT'
-    result.options.headers = { 'content-type': 'application/x-www-form-urlencoded' }
-    result.options.payload = Querystring.stringify({ app: 'tzll' })
-  }
-
-  if (type === 'token' && command === 'access') {
-    delete result.options.headers
   }
 
   return result
 }
 
-const DEFAULT_RESULT = {
-  success: false,
-  expires: auth.expires,
-  allowRenew: auth.allowRenew
-}
+// const DEFAULT_RESULT = {
+//   success: false,
+//   expires: auth.expires,
+//   allowRenew: auth.allowRenew
+// }
 
 module.exports.callApi = async function (request) {
-  // Insert access token
+  // console.log('R', request)
+  // Insert request token
   if (request.type === 'token' && request.command === 'access') {
-    request.token = auth.token
+    request.token = auth.requesToken
   }
 
-  let { method, options, url } = getHeaders(request, tellstick.parseAll(request))
-  if (!url) { return DEFAULT_RESULT }
+  const parsedCommand = tellstick.parseAll(request)
+  if (!parsedCommand) { return { success: false, message: 'Unknown command!' } }
 
+  const { method, options, url } = getHeaders(request, parsedCommand)
   const promise = Wreck.request(method, url, options)
 
   try {
@@ -73,21 +93,10 @@ module.exports.callApi = async function (request) {
     // json: 'strict' returns an error in case of none json resonse.
     const body = await Wreck.read(res, { json: 'strict' })
 
-    // Save tokens
-    if (request.type === 'token' && body.token) {
-      updateToken(body)
-    }
+    // updateAuthFile(request, body)
 
-    return {
-      ...DEFAULT_RESULT,
-      success: !body.error,
-      message: body.error ? body.error : body
-    }
+    return { success: !body.error, message: body.error ? body.error : body }
   } catch (err) {
-    return {
-      ...DEFAULT_RESULT,
-      message: err.message,
-      errorCode: err.output.statusCode
-    }
+    return { sucess: false, message: err.message }
   }
 }
