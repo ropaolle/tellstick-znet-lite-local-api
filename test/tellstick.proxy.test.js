@@ -15,11 +15,6 @@ experiment('tellstick/proxy.js', () => {
     expect(result.success).to.exist()
   })
 
-  it('tellstickApi token/new', async () => {
-    const result = await tellstickApi({ type: 'token', command: 'new' })
-    expect(result.success).to.exist()
-  })
-
   it('tellstickApi token/access', async () => {
     const result = await tellstickApi({ type: 'token', command: 'access' })
     expect(result.success).to.exist()

@@ -39,7 +39,8 @@ function getHeaders ({ type, command }) {
 
 module.exports.tellstickApi = async function (request) {
   const url = tellstick.parseAll(request)
-  console.log('tellstickApi', url, request, accessToken)
+
+  // console.log('tellstickApi', url, request, accessToken)
   if (!url) {
     return { success: false, message: 'Unknown command!' }
   }
@@ -54,6 +55,6 @@ module.exports.tellstickApi = async function (request) {
 
     return { success: !body.error, message: body.error ? body.error : body }
   } catch (err) {
-    return { sucess: false, message: err.message }
+    return { success: false, message: err.message }
   }
 }
