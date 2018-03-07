@@ -1,25 +1,14 @@
 {
   "port": 4000,
-  "token": {
-    "expires": 666,
-    "authUrl": "http://192.168.10.104/api/authorize?token=bcf089ee8176419d877bb951b9f064ec",
-    "requestToken": "bcf089ee8176419d877bb951b9f064ec"
-  },
   "app": {
-    "expires": 666,
-    "dude1": "oll",
-    "dude2": "lowdb",
     "favorites": [
       2,
-      6,
-      666
-    ]
-  },
-  "user": {
-    "name": "typicode"
-  },
-  "favorites": [
-    2,
-    6
-  ]
+      6
+    ],
+    "authUrl": "http://192.168.10.104/api/authorize?token=98201b87b4a84d2a8f4f57519cd8bd21",
+    "requestToken": "98201b87b4a84d2a8f4f57519cd8bd21",
+    "allowRenew": true,
+    "expires": 1520506553000,
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImF1ZCI6InR6bGwiLCJleHAiOjE1MjA1MDY1NTN9.eyJyZW5ldyI6dHJ1ZSwidHRsIjo4NjQwMH0.Yyc2RFVCzK5jTfCW8IfeIVFcLAWSA3ksrtR3XwvuseI"
+  }
 }

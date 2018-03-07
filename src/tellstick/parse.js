@@ -70,12 +70,12 @@ function parseSensors ({ command, id }) {
  * type: new|access|refresh
  * token: {token}
  */
-function parseTokens ({ command, token }) {
+function parseTokens ({ command, requestToken }) {
   switch (command) {
     case 'new':
       return `token`
     case 'access':
-      return token && `token?token=${token}`
+      return requestToken && `token?token=${requestToken}`
     case 'refresh':
       return `refreshToken`
     default:

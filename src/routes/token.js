@@ -1,9 +1,8 @@
 'use strict'
 
-const tellstick = require('../tellstick/proxy')
+const { tellstickApi, setAccessToken } = require('../tellstick/proxy')
 
 function updateTokens (command, message) {
-  console.log('UPDATE', command, message)
   if (!message) { return }
 
   const { authUrl, token, expires, allowRenew } = message
@@ -12,6 +11,7 @@ function updateTokens (command, message) {
     case 'new':
       return { authUrl, requestToken: token }
     case 'access':
+      setAccessToken(token)
       return { allowRenew, expires: expires * 1000, accessToken: token }
     case 'refresh':
       return { expires: expires * 1000, accessToken: token }
@@ -21,23 +21,22 @@ function updateTokens (command, message) {
 
 module.exports = {
   method: 'GET',
-  path: '/api/{version}/token',
+  path: '/api/v1/token',
   handler: async (request, h) => {
-    console.log('ROUTE', '/{version}/token')
-    const params = { type: 'token', ...request.params, ...request.query }
-    const result = await tellstick.callApi(params)
+    const db = request.db()
+    const requestToken = db.get('app.requestToken').value()
+    const params = { type: 'token', ...request.query, requestToken }
 
+    const result = await tellstickApi(params)
+
+    // Save tokens to db
     if (result.success) {
-      const db = request.db()
-
       const update = updateTokens(params.command, result.message)
-      db.get('token').assign(update).write()
-      // const token = {
-      //   ...db.get('token').value(),
-      //   ...updateTokens(params.command, result.message)
-      // }
-      // console.log('TOKEN', token)
+      db.get('app').assign(update).write()
     }
+
+    // Do not expose token to browser
+    delete result.message.token
 
     return h.response(result)
   }

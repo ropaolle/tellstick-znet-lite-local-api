@@ -1,21 +1,18 @@
 'use strict'
 
-const tellstick = require('../tellstick/proxy')
+const { tellstickApi } = require('../tellstick/proxy')
 
 module.exports = {
   method: 'GET',
-  path: '/api/{version}/init',
+  path: '/api/v1/init',
   handler: async (request, h) => {
-    console.log('ROUTE', '/{version}/init')
-    const result = await tellstick.callApi({ type: 'devices' })
+    const result = await tellstickApi({ type: 'devices' })
+
     // Load data from db
     const db = request.db()
-    result.app = db.get('app').value() // Get all data db.getState()
-
-    // Save data
-    // db.get('app.favorites').push(666).write()
-    // db.get('app').assign({ expires: 0 }).write()
-    // db.set('app.expires', 666).write()
+    result.allowRenew = db.get('app.allowRenew').value()
+    result.expires = db.get('app.expires').value()
+    result.favorites = db.get('app.favorites').value()
 
     return h.response(result)
   }

@@ -4,11 +4,13 @@ const Hapi = require('hapi')
 const low = require('lowdb')
 const FileAsync = require('lowdb/adapters/FileAsync')
 const routes = require('./routes')
+const { setAccessToken } = require('./tellstick/proxy')
 
 const DEFAULT_DB = {
   port: 4000,
-  token: {},
-  favorites: [2, 6]
+  app: {
+    favorites: [2, 6]
+  }
 }
 
 const server = new Hapi.Server({
@@ -30,6 +32,10 @@ low(adapter)
     return db.defaults(DEFAULT_DB).write()
   })
   .then((db) => {
+    // Make accessToken availible to the proxy
+    setAccessToken(db.app.accessToken)
+
+    // Start the server
     server.settings.port = db.port
     server
       .start()

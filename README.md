@@ -60,3 +60,24 @@ sudo env PATH=$PATH:/usr/bin /home/olle/.npm-global/lib/node_modules/pm2/bin/pm2
 
 # pm2 start/stop/restart/status/kill all
 ```
+
+### Code
+```javascript
+// Save data
+db.get('app.favorites').push(666).write()
+db.get('app').assign({ expires: 0 }).write()
+db.set('app.expires', 666).write()
+
+// HAPI log
+server.events.on('log', (event, tags) => {
+  if (tags.error) {
+    console.log(`HAPI error: ${event.error ? event.error.message : 'unknown'}`)
+  } else {
+    console.log(`HAPI info: ${JSON.stringify(event.data)}`)
+  }
+})
+
+// Generate log from route
+request.server.log('info', result)
+
+```

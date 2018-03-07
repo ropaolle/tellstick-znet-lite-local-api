@@ -1,14 +1,13 @@
 'use strict'
 
-const tellstick = require('../tellstick/proxy')
+const { tellstickApi } = require('../tellstick/proxy')
 
 module.exports = {
   method: 'GET',
-  path: '/api/{version}/{type}/{id?}',
+  path: '/api/v1/{type}/{id?}',
   handler: async (request, h) => {
-    console.log('ROUTE', '/{version}/{type}/{id?}')
     const params = { ...request.params, ...request.query }
-    const result = await tellstick.callApi(params)
+    const result = await tellstickApi(params)
 
     return h.response(result)
   }
