@@ -3,7 +3,7 @@
 const Hapi = require('hapi')
 const low = require('lowdb')
 const FileAsync = require('lowdb/adapters/FileAsync')
-const tellstick = require('./tellstick-api')
+const tellstick = require('./tellstick/proxy')
 
 const DEFAULT_DB = {
   port: 4000,

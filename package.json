@@ -10,7 +10,8 @@
     "file-exists": "^5.0.1",
     "fs": "0.0.1-security",
     "hapi": "^17.2.1",
-    "lowdb": "^1.0.0"
+    "lowdb": "^1.0.0",
+    "nodemon": "^1.17.1"
   },
   "devDependencies": {
     "code": "^5.2.0",
@@ -23,7 +24,7 @@
     "lab": "^15.3.0"
   },
   "scripts": {
-    "start": "node src/server.js",
+    "start": "nodemon src/server.js --ignore db.json",
     "test": "lab -t 90 --assert code -v",
     "test-cov-html": "lab -r html -o coverage.html"
   }

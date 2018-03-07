@@ -3,12 +3,12 @@
 const Wreck = require('wreck')
 const Querystring = require('querystring')
 const fs = require('fs')
-const tellstick = require('./tellstick-parse')
+const tellstick = require('./parse')
 
 const API_URL = 'http://192.168.10.104/api/'
 const AUTH_PATH = `${__dirname}/auth.json`
 
-let auth = require('./auth.json')
+let auth = require('../auth.json')
 
 function updateAuthFile (request, body) {
   if (!body || !request) { return }
