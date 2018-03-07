@@ -31,7 +31,7 @@ low(adapter)
     // Load defalts if db file is missing
     return db.defaults(DEFAULT_DB).write()
   })
-  .then((db) => {
+  .then(db => {
     // Make accessToken availible to the proxy
     setAccessToken(db.app.accessToken)
 

@@ -38,10 +38,11 @@ function getHeaders ({ type, command }) {
 }
 
 module.exports.tellstickApi = async function (request) {
-  // console.log('tellstickApi', request, accessToken)
-
   const url = tellstick.parseAll(request)
-  if (!url) { return { success: false, message: 'Unknown command!' } }
+  console.log('tellstickApi', url, request, accessToken)
+  if (!url) {
+    return { success: false, message: 'Unknown command!' }
+  }
 
   const { method, options } = getHeaders(request)
   const promise = Wreck.request(method, url, options)
