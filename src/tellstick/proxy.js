@@ -4,15 +4,13 @@ const Wreck = require('wreck')
 const Querystring = require('querystring')
 const tellstick = require('./parse')
 
-let accessToken = 'fauck'
+let accessToken
 
 module.exports.setAccessToken = function setAccessToken (token) {
   accessToken = token
 }
 
 function getHeaders ({ type, command }) {
-  console.log(accessToken)
-
   let result = {
     method: 'GET',
     options: {
