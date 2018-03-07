@@ -22,7 +22,7 @@ const server = new Hapi.Server({
 server.route(routes)
 
 // Create database instance and start HAPI server
-const adapter = new FileAsync('db.json')
+const adapter = new FileAsync('database.json')
 low(adapter)
   .then(db => {
     // Add db ref to the request object

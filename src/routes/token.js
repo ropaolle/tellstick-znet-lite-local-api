@@ -29,10 +29,16 @@ module.exports = {
 
     const result = await tellstickApi(params)
 
-    // Save tokens to db
     if (result.success) {
+      // Save tokens to db
       const update = updateTokens(params.command, result.message)
       db.get('app').assign(update).write()
+
+      // Notify client about new token
+      if (update.accessToken) {
+        result.message.newAccessToken = true
+        result.message.expires *= 1000 // Convert Unix timestamp to datetime
+      }
     }
 
     // Do not expose token to browser
