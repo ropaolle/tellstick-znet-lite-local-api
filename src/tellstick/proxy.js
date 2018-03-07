@@ -76,7 +76,7 @@ function getHeaders ({ type, command }, parsedCommand) {
 // }
 
 module.exports.callApi = async function (request) {
-  // console.log('R', request)
+  console.log('R', request)
   // Insert request token
   if (request.type === 'token' && request.command === 'access') {
     request.token = auth.requesToken

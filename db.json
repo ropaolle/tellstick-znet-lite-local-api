@@ -17,5 +17,9 @@
   },
   "user": {
     "name": "typicode"
-  }
+  },
+  "favorites": [
+    2,
+    6
+  ]
 }
