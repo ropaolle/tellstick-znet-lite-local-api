@@ -2,3 +2,9 @@
 
 # dependencies
 node_modules
+
+# Database
+database.json
+
+# Temp
+temp
