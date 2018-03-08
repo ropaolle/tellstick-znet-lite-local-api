@@ -42,7 +42,7 @@ function getHeaders ({ type, command }) {
 module.exports.tellstickApi = async function tellstickApi (request) {
   const url = tellstick.parseAll(request)
 
-  console.log('tellstickApi', url, request, accessToken)
+  // console.log('tellstickApi', url, request, accessToken)
   if (!url) {
     return { success: false, message: 'Unknown command!' }
   }
@@ -54,7 +54,7 @@ module.exports.tellstickApi = async function tellstickApi (request) {
     const res = await promise
     // json: 'strict' returns an error in case of none json resonse.
     const body = await Wreck.read(res, { json: 'strict' })
-    console.log('B', body)
+
     return { success: !body.error, message: body.error ? body.error : body }
   } catch (err) {
     return { success: false, message: err.message }
