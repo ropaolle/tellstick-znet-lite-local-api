@@ -13,11 +13,7 @@ const DEFAULT_DB = {
   }
 }
 
-const server = new Hapi.Server({
-  // port: 4000,             // Port is loaded from db
-  // host: '192.168.10.146', // Not needed
-  routes: { cors: true }
-})
+const server = new Hapi.Server({ routes: { cors: true } })
 
 // Import routes
 server.route(routes)
