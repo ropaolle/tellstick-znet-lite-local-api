@@ -36,10 +36,9 @@ curl -i -X GET http://0.0.0.0/api/refreshToken -H "Authorization: Bearer eyJhbGc
 ## HAPI Version 17
 
 * [Getting started](https://github.com/sfabriece/hapijs.com/blob/aecc38766cf3c8e16e99e060b05d9c4e57bf0c7d/lib/tutorials/en_US/getting-started.md)
-* [Release notes](https://github.com/hapijs/hapi/issues/3658)
+* [Release notes V17](https://github.com/hapijs/hapi/issues/3658)
 * [API Referince](https://github.com/hapijs/hapi/blob/master/API.md)
-* [v16 to v17](https://futurestud.io/tutorials/hapi-v17-upgrade-guide-your-move-to-async-await)
-* [Route example](https://github.com/hapijs/discuss/issues/597)
+* [Plugins](https://hapijs.com/tutorials/plugins?lang=en_US)
 * [Lab - Test framework](https://github.com/hapijs/lab)
 * [Code - Assertion](https://github.com/hapijs/code/blob/master/API.md)
 
@@ -79,5 +78,17 @@ server.events.on('log', (event, tags) => {
 
 // Generate log from route
 request.server.log('info', result)
+
+// Validate
+const Joi = require('joi')
+
+// Route config
+config: {
+    validate: {
+      params: { // or query
+        version: Joi.string().min(2).max(3)
+      }
+    }
+  }
 
 ```

@@ -1,20 +1,20 @@
 'use strict'
 
-const { experiment, it } = (exports.lab = require('lab').script())
 const { expect } = require('code')
+const Lab = require('lab')
+const lab = exports.lab = Lab.script()
+const { experiment, it } = lab
 
 const server = require('../src/server')
 
 experiment('server.js', () => {
-  it('Call /version -> 200', async () => {
-    await server.inject({ method: 'GET', url: '/api/v1' }).then(response => {
-      expect(response.statusCode).to.equal(200)
-    })
+  lab.before(() => {
+    return server.start().then(/* () => (console.log'Test server started!') */)
   })
 
-  it('Call /version -> 403', async () => {
-    await server.inject({ method: 'GET', url: '/api/v2' }).then(response => {
-      expect(response.statusCode).to.equal(403)
+  it('Call / -> 200', async () => {
+    await server.inject({ method: 'GET', url: '/' }).then(response => {
+      expect(response.statusCode).to.equal(404)
     })
   })
 

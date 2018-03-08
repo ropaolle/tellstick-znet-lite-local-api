@@ -7,7 +7,7 @@ const { tellstickApi, setAccessToken } = require('../src/tellstick/proxy')
 
 experiment('tellstick/proxy.js', () => {
   it('setAccessToken', async () => {
-    setAccessToken('')
+    expect(setAccessToken('dummykey')).to.equal('dummykey')
   })
 
   it('tellstickApi token/new', async () => {

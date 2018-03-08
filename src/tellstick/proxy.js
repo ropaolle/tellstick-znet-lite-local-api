@@ -6,16 +6,30 @@ const tellstick = require('./parse')
 
 let accessToken
 
-module.exports.setAccessToken = function setAccessToken (token) {
+module.exports.setAccessToken = (token) => {
   accessToken = token
+  return accessToken
 }
 
+const wreck = Wreck.defaults({
+  timeout: 1000,
+  baseUrl: 'http://192.168.10.104/api/'
+})
+
 function getHeaders ({ type, command }) {
-  let result = {
+  if (type === 'token' && (command === 'new' || command === 'access')) {
+    return {
+      method: 'PUT',
+      options: {
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        payload: Querystring.stringify({ app: 'tzll' })
+      }
+    }
+  }
+
+  return {
     method: 'GET',
     options: {
-      timeout: 1000,
-      baseUrl: 'http://192.168.10.104/api/',
       headers: {
         authorization: `Bearer ${accessToken}`,
         'Access-Control-Allow-Origin': '*',
@@ -23,21 +37,9 @@ function getHeaders ({ type, command }) {
       }
     }
   }
-
-  if (type === 'token') {
-    if (command === 'new') {
-      result.method = 'PUT'
-      result.options.headers = { 'content-type': 'application/x-www-form-urlencoded' }
-      result.options.payload = Querystring.stringify({ app: 'tzll' })
-    } else if (command === 'access') {
-      delete result.options.headers
-    }
-  }
-
-  return result
 }
 
-module.exports.tellstickApi = async function (request) {
+module.exports.tellstickApi = async function tellstickApi (request) {
   const url = tellstick.parseAll(request)
 
   // console.log('tellstickApi', url, request, accessToken)
@@ -46,7 +48,7 @@ module.exports.tellstickApi = async function (request) {
   }
 
   const { method, options } = getHeaders(request)
-  const promise = Wreck.request(method, url, options)
+  const promise = wreck.request(method, url, options)
 
   try {
     const res = await promise

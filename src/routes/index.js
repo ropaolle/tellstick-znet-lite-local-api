@@ -1,7 +1,6 @@
 module.exports = [
-  require('./version'),
   require('./init'),
   require('./token'),
-  require('./devices'),
-  require('./favorites')
+  require('./favorites'),
+  require('./devices')
 ]
