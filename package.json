@@ -11,8 +11,7 @@
     "fs": "0.0.1-security",
     "hapi": "^17.2.1",
     "joi": "^13.1.2",
-    "lowdb": "^1.0.0",
-    "nodemon": "^1.17.1"
+    "lowdb": "^1.0.0"
   },
   "devDependencies": {
     "code": "^5.2.0",
