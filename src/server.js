@@ -19,6 +19,7 @@ const server = new Hapi.Server({
   routes: { cors: true }
 })
 
+// Import routes
 server.route(routes)
 
 // Create database instance and start HAPI server

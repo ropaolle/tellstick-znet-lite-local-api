@@ -37,7 +37,7 @@ function getHeaders ({ type, command }) {
   return result
 }
 
-module.exports.tellstickApi = async function (request) {
+module.exports.tellstickApi = async function tellstickApi (request) {
   const url = tellstick.parseAll(request)
 
   // console.log('tellstickApi', url, request, accessToken)
