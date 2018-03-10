@@ -14,23 +14,6 @@ function addFavoritesTypeAndIndexedById (devices, favorites, type = null) {
   }, {})
 }
 
-/* function addFavoritesTypeAndIndexedById (devices, favorites, type) {
-  // Add favorites
-  let result = devices.map(device => ({
-    ...device, favorite: favorites.indexOf(device.id) !== -1
-  }))
-
-  // Add type
-  if (type) {
-    result = result.map(device => ({ ...device, type }))
-  }
-
-  return result.reduce((acc, device) => {
-    acc[device.id] = { ...device }
-    return acc
-  }, {})
-} */
-
 module.exports = {
   method: 'GET',
   path: '/api/v1/init',
@@ -44,20 +27,16 @@ module.exports = {
 
     const response = {
       success: deviceData.success && sensorData.success,
+      error: deviceData.error || sensorData.error, // Only displays the first error
       allowRenew: db.get('app.allowRenew').value(),
       expires: db.get('app.expires').value()
     }
 
-    if (deviceData.success) {
-      response.devices = addFavoritesTypeAndIndexedById(deviceData.data.device, favorites)
-    } else {
-      response.error = deviceData.error
-    }
-
-    if (sensorData.success) {
+    // Remove sensors from the device list
+    if (deviceData.success && sensorData.success) {
+      const devices = deviceData.data.device.filter(device => !sensorData.data.sensor.find(sensor => sensor.id === device.id))
+      response.devices = addFavoritesTypeAndIndexedById(devices, favorites)
       response.sensors = addFavoritesTypeAndIndexedById(sensorData.data.sensor, favorites, 'sensor')
-    } else {
-      response.error = sensorData.error
     }
 
     return h.response(response)
