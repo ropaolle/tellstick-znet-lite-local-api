@@ -34,9 +34,9 @@ module.exports = {
 
     // Remove sensors from the device list
     if (deviceData.success && sensorData.success) {
-      const devices = deviceData.data.device.filter(device => !sensorData.data.sensor.find(sensor => sensor.id === device.id))
+      const devices = deviceData.message.device.filter(device => !sensorData.message.sensor.find(sensor => sensor.id === device.id))
       response.devices = addFavoritesTypeAndIndexedById(devices, favorites)
-      response.sensors = addFavoritesTypeAndIndexedById(sensorData.data.sensor, favorites, 'sensor')
+      response.sensors = addFavoritesTypeAndIndexedById(sensorData.message.sensor, favorites, 'sensor')
     }
 
     return h.response(response)

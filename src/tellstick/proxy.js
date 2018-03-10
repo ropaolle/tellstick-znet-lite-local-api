@@ -58,7 +58,7 @@ module.exports.tellstickApi = async function tellstickApi (request) {
 
     return {
       success: !body.error,
-      data: body.error ? null : body,
+      message: body.error ? null : body,
       error: body.error ? body.error : null
     }
   } catch (err) {
