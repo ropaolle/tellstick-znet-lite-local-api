@@ -44,7 +44,8 @@ module.exports.tellstickApi = async function tellstickApi (request) {
 
   // console.log('tellstickApi', url, request, accessToken)
   if (!url) {
-    return { success: false, message: 'Unknown command!' }
+    // return { success: false, message: 'Unknown command!' }
+    return { success: false, error: 'Unknown command!' }
   }
 
   const { method, options } = getHeaders(request)
@@ -55,8 +56,13 @@ module.exports.tellstickApi = async function tellstickApi (request) {
     // json: 'strict' returns an error in case of none json resonse.
     const body = await Wreck.read(res, { json: 'strict' })
 
-    return { success: !body.error, message: body.error ? body.error : body }
+    return {
+      success: !body.error,
+      data: body.error ? null : body,
+      error: body.error ? body.error : null
+    }
   } catch (err) {
-    return { success: false, message: err.message }
+    // return { success: false, message: err.message }
+    return { error: err.message }
   }
 }
