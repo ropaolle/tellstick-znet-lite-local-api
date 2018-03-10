@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "nodemon src/server.js --ignore database.json",
-    "test": "lab -t 90 --assert code -v",
+    "test": "lab -t 85 --assert code -v",
     "test-cov-html": "lab -r html -o coverage.html"
   }
 }

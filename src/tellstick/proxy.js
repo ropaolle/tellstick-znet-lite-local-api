@@ -13,7 +13,7 @@ module.exports.setAccessToken = (token) => {
 
 const wreck = Wreck.defaults({
   timeout: 1000,
-  baseUrl: 'http://192.168.10.104/api/'
+  baseUrl: 'http://192.168.10.103/api/'
 })
 
 function getHeaders ({ type, command }) {

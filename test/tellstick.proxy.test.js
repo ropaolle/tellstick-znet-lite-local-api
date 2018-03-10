@@ -12,7 +12,7 @@ experiment('tellstick/proxy.js', () => {
 
   it('tellstickApi token/new', async () => {
     const result = await tellstickApi({ type: 'token', command: 'new' })
-    expect(result.success).to.exist()
+    expect(result.error).to.exist()
   })
 
   it('tellstickApi token/access', async () => {
@@ -22,11 +22,11 @@ experiment('tellstick/proxy.js', () => {
 
   it('tellstickApi token/access with token', async () => {
     const result = await tellstickApi({ type: 'token', command: 'access', requestToken: 'dummy' })
-    expect(result.success).to.exist()
+    expect(result.error).to.exist()
   })
 
   it('tellstickApi devices', async () => {
     const result = await tellstickApi({ type: 'devices' })
-    expect(result.success).to.exist()
+    expect(result.error).to.exist()
   })
 })

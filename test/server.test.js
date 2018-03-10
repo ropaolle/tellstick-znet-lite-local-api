@@ -38,19 +38,22 @@ experiment('server.js', () => {
 
   it('Call /token -> 200', async () => {
     await server.inject({ method: 'GET', url: '/api/v1/token?command=new' }).then(response => {
-      expect(response.result.success).to.exist()
+      expect(response.statusCode).to.equal(200)
+      // expect(response.result.success).to.exist()
     })
   })
 
   it('Call /token -> 200', async () => {
     await server.inject({ method: 'GET', url: '/api/v1/token?command=refresh' }).then(response => {
-      expect(response.result.success).to.exist()
+      expect(response.statusCode).to.equal(200)
+      // expect(response.result.success).to.exist()
     })
   })
 
   it('Call /token -> 200', async () => {
     await server.inject({ method: 'GET', url: '/api/v1/token?command=access' }).then(response => {
-      expect(response.result.success).to.exist()
+      expect(response.statusCode).to.equal(200)
+      // expect(response.result.success).to.exist()
     })
   })
 
