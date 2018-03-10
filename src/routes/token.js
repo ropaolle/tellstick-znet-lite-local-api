@@ -39,10 +39,11 @@ module.exports = {
         result.message.newAccessToken = true
         result.message.expires *= 1000 // Convert Unix timestamp to datetime
       }
-    }
 
-    // Do not expose token to browser
-    delete result.message.token
+      // Do not expose token to browser
+      delete result.message.token
+    }
+    // console.log('R', result)
 
     return h.response(result)
   }
