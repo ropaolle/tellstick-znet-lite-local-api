@@ -15,7 +15,6 @@ const TELLSTICK_DIM = 16
 // const TELLSTICK_STOP = 512
 
 const SUPPORTED_METHODS = TELLSTICK_TURNON + TELLSTICK_TURNOFF + TELLSTICK_DIM
-const INCLUDE_VALUES = 1
 
 /**
  * Device query's
@@ -26,7 +25,7 @@ const INCLUDE_VALUES = 1
 function parseDevices ({ command, id, level }) {
   // List all devices
   if (!id) {
-    return `devices/list?supportedMethods=${SUPPORTED_METHODS}`
+    return `devices/list?supportedMethods=${SUPPORTED_METHODS}&includeIgnored=1`
   }
 
   // Device commands
@@ -47,18 +46,18 @@ function parseDevices ({ command, id, level }) {
 /**
  * Sensor query's
  *
- * command: info
+ * command: list|info
  */
 function parseSensors ({ command, id }) {
   // List all sensors
   if (!id) {
-    return `sensors/list?includeValues=${INCLUDE_VALUES}`
+    return `sensors/list?includeIgnored=1&includeValues=1` // &includeScale=1&includeUnit=1
   }
 
   // Sensor commands
   switch (command) {
     case 'info':
-      return `sensor/${command}?id=${id}`
+      return id && `sensor/${command}?id=${id}` // &includeUnit=1
     default:
       return null
   }

@@ -41,7 +41,7 @@ experiment('tellstick/parse.js', () => {
   // Sensors
   it('Sensors', () => {
     const result = parseAll({ type: 'sensors' })
-    expect(result).to.equal('sensors/list?includeValues=1')
+    expect(result).to.equal('sensors/list?includeIgnored=1&includeValues=1')
   })
 
   it('Sensors: info', () => {
@@ -57,7 +57,7 @@ experiment('tellstick/parse.js', () => {
   // Devices
   it('Devices', () => {
     const result = parseAll({ type: 'devices' })
-    expect(result).to.equal('devices/list?supportedMethods=19')
+    expect(result).to.equal('devices/list?supportedMethods=19&includeIgnored=1')
   })
 
   it('Devices: info', () => {
