@@ -17,6 +17,6 @@ module.exports = {
 
     db.set('app.favorites', [...set]).write()
 
-    return h.response({ success: true, favorites })
+    return h.response({ success: true, favorites: [ ...set ] })
   }
 }
