@@ -5,6 +5,7 @@ node_modules
 
 # Database
 database.json
+database.test.json
 
 # Temp
 temp

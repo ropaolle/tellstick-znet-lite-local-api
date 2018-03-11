@@ -57,7 +57,7 @@ function parseSensors ({ command, id }) {
   // Sensor commands
   switch (command) {
     case 'info':
-      return id && `sensor/${command}?id=${id}` // &includeUnit=1
+      return `sensor/${command}?id=${id}` // &includeUnit=1
     default:
       return null
   }

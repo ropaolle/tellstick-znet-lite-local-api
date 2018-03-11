@@ -3,20 +3,16 @@
 const Wreck = require('wreck')
 const Querystring = require('querystring')
 const tellstick = require('./parse')
-
-let accessToken
-
-module.exports.setAccessToken = (token) => {
-  accessToken = token
-  return accessToken
-}
+const { db } = require('../database')
 
 const wreck = Wreck.defaults({
   timeout: 1000,
-  baseUrl: 'http://192.168.10.103/api/'
+  baseUrl: 'http://192.168.10.104/api/'
 })
 
 function getHeaders ({ type, command }) {
+  const accessToken = db().get('app.accessToken').value()
+
   if (type === 'token' && command === 'new') {
     return {
       method: 'PUT',
@@ -39,13 +35,14 @@ function getHeaders ({ type, command }) {
   }
 }
 
+const DEFAULT_REPLY = { success: false, error: null, message: null }
+
 module.exports.tellstickApi = async function tellstickApi (request) {
   const url = tellstick.parseAll(request)
 
   // console.log('tellstickApi', url, request, accessToken)
   if (!url) {
-    // return { success: false, message: 'Unknown command!' }
-    return { success: false, error: 'Unknown command!' }
+    return { ...DEFAULT_REPLY, error: 'Unknown command!' }
   }
 
   const { method, options } = getHeaders(request)
@@ -62,7 +59,6 @@ module.exports.tellstickApi = async function tellstickApi (request) {
       error: body.error ? body.error : null
     }
   } catch (err) {
-    // return { success: false, message: err.message }
-    return { error: err.message }
+    return { ...DEFAULT_REPLY, error: err.message }
   }
 }

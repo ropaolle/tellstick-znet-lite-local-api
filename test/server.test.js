@@ -5,61 +5,92 @@ const Lab = require('lab')
 const lab = exports.lab = Lab.script()
 const { experiment, it } = lab
 
-const server = require('../src/server')
+const jsonDb = require('../src/database')
+const hapiServer = require('../src/server')
+
+let server
+
+const DEFAULT_DB = {
+  port: 4000,
+  app: {
+    favorites: [3, 4],
+    'authUrl': 'a',
+    'requestToken': 'b',
+    'expires': 666,
+    'accessToken': 'c',
+    'allowRenew': false
+  }
+}
+
+lab.before(async () => {
+  const db = await jsonDb.init('database.test.json', DEFAULT_DB).catch((err) => console.log('Error', err))
+  server = await hapiServer.start(db)
+})
+
+lab.after(async () => {
+  await hapiServer.stop()
+})
 
 experiment('server.js', () => {
-  lab.before(() => {
-    return server.start().then(/* () => (console.log'Test server started!') */)
+  it('Call /api/v1/ping - valid api verion', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/ping' })
+    expect(response.result.message).to.equal('pong')
   })
 
-  it('Call / -> 200', async () => {
-    await server.inject({ method: 'GET', url: '/' }).then(response => {
-      expect(response.statusCode).to.equal(404)
-    })
+  it('Call /api/v1/ping - invalid api version', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v2/ping' })
+    expect(response.statusCode).to.equal(404)
   })
 
-  it('Call /init -> 200', async () => {
-    await server.inject({ method: 'GET', url: '/api/v1/init' }).then(response => {
-      expect(response.statusCode).to.equal(200)
-    })
+  it('Call /api/v1/devices -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/devices' })
+    expect(response.result.error).to.exist()
   })
 
-  it('Call /favorites -> 200', async () => {
-    await server.inject({ method: 'GET', url: '/api/v1/favorites/2' }).then(response => {
-      expect(response.statusCode).to.equal(200)
-    })
+  it('Call /api/v1/devices/1 -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/devices/1' })
+    expect(response.result.error).to.equal('Unknown command!')
   })
 
-  it('Call /favorites -> 200', async () => {
-    await server.inject({ method: 'GET', url: '/api/v1/favorites/2' }).then(response => {
-      expect(response.statusCode).to.equal(200)
-    })
+  it('Call /api/v1/devices/1?command=info -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/devices/1?command=info' })
+    expect(response.result.error).to.exist()
   })
 
-  it('Call /token -> 200', async () => {
-    await server.inject({ method: 'GET', url: '/api/v1/token?command=new' }).then(response => {
-      expect(response.statusCode).to.equal(200)
-      // expect(response.result.success).to.exist()
-    })
+  it('Call /api/v1/favorites/3 -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/favorites/3' })
+    expect(response.result.favorites).to.equal([4])
   })
 
-  it('Call /token -> 200', async () => {
-    await server.inject({ method: 'GET', url: '/api/v1/token?command=refresh' }).then(response => {
-      expect(response.statusCode).to.equal(200)
-      // expect(response.result.success).to.exist()
-    })
+  it('Call /api/v1/favorites/100 -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/favorites/100' })
+    expect(response.result.favorites).to.equal([4, 100])
   })
 
-  it('Call /token -> 200', async () => {
-    await server.inject({ method: 'GET', url: '/api/v1/token?command=access' }).then(response => {
-      expect(response.statusCode).to.equal(200)
-      // expect(response.result.success).to.exist()
-    })
+  it('Call /api/v1/token -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/token' })
+    expect(response.result.error).to.equal('Unknown command!')
   })
 
-  it('Call /devices -> 200', async () => {
-    await server.inject({ method: 'GET', url: '/api/v1/devices' }).then(response => {
-      expect(response.statusCode).to.equal(200)
-    })
+  it('Call /api/v1/token?command=new -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/token?command=new' })
+    expect(response.result.error).to.exist()
+  })
+
+  it('Call /api/v1/token?command=access -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/token?command=access' })
+    expect(response.result.error).to.exist()
+  })
+
+  it('Call /api/v1/token?command=refresh -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/token?command=refresh' })
+    expect(response.result.error).to.exist()
+  })
+})
+
+experiment('server.js - extra timeout needed', { timeout: 3000 }, () => {
+  it('Call /api/v1/init -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/init' })
+    expect(response.result.expires).to.equal(666)
   })
 })
