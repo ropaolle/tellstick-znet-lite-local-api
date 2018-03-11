@@ -1,6 +1,6 @@
 'use strict'
 
-const { tellstickApi, setAccessToken } = require('../tellstick/proxy')
+const { tellstickApi } = require('../tellstick/proxy')
 
 function updateTokens (command, message) {
   if (!message) { return }
@@ -11,7 +11,6 @@ function updateTokens (command, message) {
     case 'new':
       return { authUrl, requestToken: token }
     case 'access':
-      setAccessToken(token)
       return { allowRenew, expires: expires * 1000, accessToken: token }
     case 'refresh':
       return { expires: expires * 1000, accessToken: token }
