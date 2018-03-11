@@ -42,11 +42,6 @@ experiment('server.js', () => {
     expect(response.statusCode).to.equal(404)
   })
 
-  it('Call /api/v1/init -> 200', async () => {
-    const response = await server.inject({ method: 'GET', url: '/api/v1/init' })
-    expect(response.result.expires).to.equal(666)
-  })
-
   it('Call /api/v1/devices -> 200', async () => {
     const response = await server.inject({ method: 'GET', url: '/api/v1/devices' })
     expect(response.result.error).to.exist()
@@ -90,5 +85,12 @@ experiment('server.js', () => {
   it('Call /api/v1/token?command=refresh -> 200', async () => {
     const response = await server.inject({ method: 'GET', url: '/api/v1/token?command=refresh' })
     expect(response.result.error).to.exist()
+  })
+})
+
+experiment('server.js - extra timeout needed', { timeout: 3000 }, () => {
+  it('Call /api/v1/init -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/init' })
+    expect(response.result.expires).to.equal(666)
   })
 })
