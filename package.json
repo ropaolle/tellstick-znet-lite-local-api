@@ -7,6 +7,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "date-fns": "^1.29.0",
     "hapi": "^17.2.1",
     "joi": "^13.1.2",
     "lodash.isempty": "^4.4.0",
@@ -27,7 +28,7 @@
     "lab": "^15.3.0"
   },
   "scripts": {
-    "start": "nodemon src/api.js --ignore database.json  --ignore history.json",
+    "start": "nodemon src/api.js --ignore '*.json'",
     "test": "lab -t 85 --assert code -v",
     "test-cov-html": "lab -r html -o coverage.html"
   }

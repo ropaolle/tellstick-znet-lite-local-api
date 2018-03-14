@@ -1,9 +1,9 @@
 ## Todo
 
-* [] ?
-* [] Move db to dedicated file
-* [] Fix tests
-* [] Client use Axios
+* [ ] Store history someware else, firestore?
+* [ ] Add history to client (prod + demo)
+* [ ] Sparklines https://github.com/borisyankov/react-sparklines
+
 
 
 ## Tellstick

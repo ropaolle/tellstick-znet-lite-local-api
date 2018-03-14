@@ -4,9 +4,10 @@
 node_modules
 
 # Database
-database.json
-database.test.json
-history.json
+database
+# database.json
+# database.test.json
+# history.json
 
 # Temp
 temp
