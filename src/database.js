@@ -3,7 +3,7 @@
 const low = require('lowdb')
 const FileAsync = require('lowdb/adapters/FileAsync')
 
-const DATABASE_FILE = 'database.json'
+const DATABASE_FILE = './database/database.json'
 
 const DEFAULT_DB = {
   port: 4000,
