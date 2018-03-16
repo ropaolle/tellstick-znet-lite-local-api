@@ -5,8 +5,8 @@ const Lab = require('lab')
 const lab = exports.lab = Lab.script()
 const { experiment, it } = lab
 
-const jsonDb = require('../src/database')
-const hapiServer = require('../src/server')
+const jsonDb = require('../src/utils/database')
+const hapiServer = require('../src/utils/server')
 
 let server
 
@@ -23,7 +23,7 @@ const DEFAULT_DB = {
 }
 
 lab.before(async () => {
-  const db = await jsonDb.init('database.test.json', DEFAULT_DB).catch((err) => console.log('Error', err))
+  const db = await jsonDb.init('./test/database.test.json', DEFAULT_DB).catch((err) => console.log('Error', err))
   server = await hapiServer.start(db)
 })
 

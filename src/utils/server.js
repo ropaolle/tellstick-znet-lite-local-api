@@ -1,7 +1,7 @@
 'use strict'
 
 const Hapi = require('hapi')
-const routes = require('./routes')
+const routes = require('../routes')
 
 const server = new Hapi.Server({ routes: { cors: true } })
 

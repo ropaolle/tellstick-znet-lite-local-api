@@ -14,24 +14,24 @@ const DEFAULT_DB = {
     'expires': 0,
     'accessToken': '',
     'allowRenew': false
-  }
+  },
+  history: {}
 }
 
-// Create database instance
-let adapter = null
-let jsonDb = null
+let adapter
+let jsonDb
 
-module.exports.init = async function init (filename, overwriteDb) {
-  if (jsonDb === null) {
+module.exports.init = async function init (filename, defaultDb) {
+  if (!jsonDb) {
     adapter = new FileAsync(filename || DATABASE_FILE)
     jsonDb = await low(adapter).catch((err) => console.log('Error', err))
 
-    // Create file and load defalts if db file is missing
-    if (!overwriteDb) {
-      // Only create new db if it don't exist
+    if (!defaultDb) {
+      // Create file and load defalts if db file is missing
       jsonDb.defaults(DEFAULT_DB).write()
     } else {
-      jsonDb.setState(overwriteDb).write()
+      // Overwrite db, used by tests
+      jsonDb.setState(defaultDb).write()
     }
   }
 
@@ -41,7 +41,3 @@ module.exports.init = async function init (filename, overwriteDb) {
 module.exports.db = function db () {
   return jsonDb
 }
-
-// module.exports.get = (path) => {
-//   return jsonDb.get(path).value()
-// }

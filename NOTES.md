@@ -4,8 +4,6 @@
 * [ ] Add history to client (prod + demo)
 * [ ] Sparklines https://github.com/borisyankov/react-sparklines
 
-
-
 ## Tellstick
 
 * [Blogg - Tellstick Local API](http://developer.telldus.com/blog/2016/05/24/local-api-for-tellstick-znet-lite-beta-now-in-public-beta)
@@ -99,4 +97,3 @@ config: {
   }
 }
 ```
-
