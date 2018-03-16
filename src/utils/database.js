@@ -17,22 +17,16 @@ const DEFAULT_DB = {
   }
 }
 
-// Create database instance
-let adapter = null
-let jsonDb = null
+let adapter
+let jsonDb
 
-module.exports.init = async function init (filename, overwriteDb) {
-  if (jsonDb === null) {
+module.exports.init = async function init (filename) {
+  if (!jsonDb) {
     adapter = new FileAsync(filename || DATABASE_FILE)
     jsonDb = await low(adapter).catch((err) => console.log('Error', err))
 
-    // Create file and load defalts if db file is missing
-    if (!overwriteDb) {
-      // Only create new db if it don't exist
-      jsonDb.defaults(DEFAULT_DB).write()
-    } else {
-      jsonDb.setState(overwriteDb).write()
-    }
+    // Save defalts if db file is missing
+    jsonDb.defaults(DEFAULT_DB).write()
   }
 
   return jsonDb
@@ -41,7 +35,3 @@ module.exports.init = async function init (filename, overwriteDb) {
 module.exports.db = function db () {
   return jsonDb
 }
-
-// module.exports.get = (path) => {
-//   return jsonDb.get(path).value()
-// }

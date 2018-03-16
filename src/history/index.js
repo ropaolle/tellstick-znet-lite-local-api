@@ -6,21 +6,22 @@ const format = require('date-fns/format')
 const isEmpty = require('lodash.isempty')
 const util = require('util')
 const setTimeoutPromise = util.promisify(setTimeout)
-const difference = require('./differense')
+const difference = require('../utils/differense')
 const { tellstickApi } = require('../tellstick/proxy')
 
-let TICKER_INTERVAL = 1000 * 60 * 5 // Save history every 5 min
+let TICKER_INTERVAL = 1000 * 60 * 5 // Default: check history every 5 min
 let DATABASE_PATH = './database'
 
 let jsonDb
 let adapter
 let run = false
 let timeout
-let prevMessage = {}
+let prevMessage
 
 async function cronAction (db = jsonDb) {
   try {
     const { success, message } = await tellstickApi({ type: 'sensors' })
+    // console.log('tellstickApi', success, message, error)
 
     if (success) {
       const messageDiff = difference(message, prevMessage)
@@ -46,12 +47,16 @@ async function createOrOpenNewDatabaseFile () {
     jsonDb = await low(adapter).catch((err) => console.log('Error', err))
     console.log('History logg started: ', adapter.source)
 
+    const state = jsonDb.getState()
+    const keys = Object.keys(state)
+    console.log(keys.map(val => new Date(Number(val))))
+
     // Clear prevMessage to make sure the first saved status is a full object
     prevMessage = {}
   }
 }
 
-async function cronTicker (intervall) {
+async function cronTicker (intervall = TICKER_INTERVAL) {
   // Create new db file every day or if it doesn't exists
   await createOrOpenNewDatabaseFile()
 
@@ -67,11 +72,15 @@ async function cronTicker (intervall) {
 
 module.exports.start = async function start (intervall, runOnce = false) {
   run = !runOnce
-  cronTicker(intervall || TICKER_INTERVAL)
+  cronTicker(intervall)
 }
 
 module.exports.stop = async function stop () {
   run = false
   clearInterval(timeout)
   console.log('History logg stopped: ', adapter.source)
+}
+
+module.exports.history = function history () {
+  return jsonDb
 }

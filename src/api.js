@@ -1,10 +1,13 @@
 'use strict'
 
-const jsonDb = require('./database')
+const jsonDb = require('./utils/database')
 const history = require('./history')
-const hapiServer = require('./server')
+const hapiServer = require('./utils/server')
 
-jsonDb.init().then(async (db) => {
-  await hapiServer.start(db)
+async function runApi () {
+  const db = await jsonDb.init().catch((err) => console.log('Database error', err))
   await history.start()
-}).catch((err) => console.log('Err', err))
+  await hapiServer.start(db)
+}
+
+runApi()

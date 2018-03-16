@@ -3,11 +3,11 @@
 const Wreck = require('wreck')
 const Querystring = require('querystring')
 const tellstick = require('./parse')
-const { db } = require('../database')
+const { db } = require('../utils/database')
 
 const wreck = Wreck.defaults({
   timeout: 1000,
-  baseUrl: 'http://192.168.10.104/api/'
+  baseUrl: 'http://192.168.10.163/api/' // DHCP Static IP-mapping: TellStick-ZNet-Lite ac:ca:54:01:a9:93 192.168.10.163
 })
 
 function getHeaders ({ type, command }) {
@@ -40,7 +40,7 @@ const DEFAULT_REPLY = { success: false, error: null, message: null }
 module.exports.tellstickApi = async function tellstickApi (request) {
   const url = tellstick.parseAll(request)
 
-  // console.log('tellstickApi', url, request, accessToken)
+  // console.log('tellstickApi', url, request)
   if (!url) {
     return { ...DEFAULT_REPLY, error: 'Unknown command!' }
   }
