@@ -97,8 +97,7 @@ experiment('server.js', () => {
 
   it('Call /api/v1/history -> 200', async () => {
     const response = await server.inject({ method: 'GET', url: '/api/v1/history' })
-    console.log(response.result)
-    expect(response.result).to.equal('Saved records: 1')
+    expect(response.result.message).to.equal('Saved records: 1')
   })
 })
 
