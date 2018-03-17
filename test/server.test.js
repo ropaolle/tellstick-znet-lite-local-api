@@ -89,6 +89,11 @@ experiment('server.js', () => {
     const response = await server.inject({ method: 'GET', url: '/api/v1/history' })
     expect(response.result.message).to.equal('Saved records: 1')
   })
+
+  it('Call /api/v1/minmax -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/minmax' })
+    expect(response.result.message).to.equal('minMax cleared')
+  })
 })
 
 experiment('server.js - extra timeout needed', { timeout: 3000 }, () => {

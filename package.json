@@ -29,7 +29,7 @@
   },
   "scripts": {
     "start": "nodemon src/api.js --ignore '*.json'",
-    "test": "lab -t 85 --assert code -v",
+    "test": "lab -t 70 --assert code -v",
     "test-cov-html": "lab -r html -o coverage.html"
   }
 }
