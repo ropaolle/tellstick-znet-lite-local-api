@@ -40,16 +40,6 @@ lab.after(async () => {
 })
 
 experiment('server.js', () => {
-  it('Call /api/v1/ping - valid api verion', async () => {
-    const response = await server.inject({ method: 'GET', url: '/api/v1/ping' })
-    expect(response.result.message).to.equal('pong')
-  })
-
-  it('Call /api/v1/ping - invalid api version', async () => {
-    const response = await server.inject({ method: 'GET', url: '/api/v2/ping' })
-    expect(response.statusCode).to.equal(404)
-  })
-
   it('Call /api/v1/devices -> 200', async () => {
     const response = await server.inject({ method: 'GET', url: '/api/v1/devices' })
     expect(response.result.error).to.exist()
