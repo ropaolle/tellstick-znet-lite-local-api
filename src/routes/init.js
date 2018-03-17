@@ -14,6 +14,12 @@ function addFavoritesTypeAndIndexedById (devices, favorites, type = null) {
   }, {})
 }
 
+function removeSensorsFromDeviceList (devices, sensors) {
+  return devices.filter(
+    device => sensors.find(sensor => sensor.id === device.id)
+  )
+}
+
 module.exports = {
   method: 'GET',
   path: '/api/v1/init',
@@ -34,18 +40,10 @@ module.exports = {
     }
 
     if (deviceData.success && sensorData.success) {
-      // Remove sensors from the device list
-      const devices = deviceData.message.device.filter(
-        device =>
-          !sensorData.message.sensor.find(sensor => sensor.id === device.id)
-      )
-      //
+      let sensors = sensorData.message.sensor
+      let devices = removeSensorsFromDeviceList(deviceData.message.device, sensors)
       response.devices = addFavoritesTypeAndIndexedById(devices, favorites)
-      response.sensors = addFavoritesTypeAndIndexedById(
-        sensorData.message.sensor,
-        favorites,
-        'sensor'
-      )
+      response.sensors = addFavoritesTypeAndIndexedById(sensors, favorites, 'sensor')
     }
 
     return h.response(response)
