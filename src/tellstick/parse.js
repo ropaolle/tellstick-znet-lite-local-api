@@ -20,6 +20,7 @@ const SUPPORTED_METHODS = TELLSTICK_TURNON + TELLSTICK_TURNOFF + TELLSTICK_DIM
  * Device query's
  *
  * command: turnOn|turnOff|dim|info|history
+ * id: number
  * level: 0 - 255
  */
 function parseDevices ({ command, id, level }) {
@@ -39,7 +40,6 @@ function parseDevices ({ command, id, level }) {
     case 'history':
       return `device/${command}?id=${id}`
     default:
-      return null
   }
 }
 
@@ -47,6 +47,7 @@ function parseDevices ({ command, id, level }) {
  * Sensor query's
  *
  * command: list|info
+ * id: number
  */
 function parseSensors ({ command, id }) {
   // List all sensors
@@ -59,7 +60,6 @@ function parseSensors ({ command, id }) {
     case 'info':
       return `sensor/${command}?id=${id}` // &includeUnit=1
     default:
-      return null
   }
 }
 
@@ -67,7 +67,7 @@ function parseSensors ({ command, id }) {
  * Authentication query's
  *
  * type: new|access|refresh
- * token: {token}
+ * requestToken: {token}
  */
 function parseTokens ({ command, requestToken }) {
   switch (command) {
@@ -78,7 +78,6 @@ function parseTokens ({ command, requestToken }) {
     case 'refresh':
       return `refreshToken`
     default:
-      return null
   }
 }
 
@@ -91,6 +90,5 @@ module.exports.parseAll = function (request) {
     case 'token':
       return parseTokens(request)
     default:
-      return null
   }
 }

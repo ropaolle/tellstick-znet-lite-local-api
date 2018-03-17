@@ -9,13 +9,13 @@ experiment('tellstick/parse.js', () => {
   // Basic
   it('Empty object', () => {
     const result = parseAll({ type: '' })
-    expect(result).to.be.null()
+    expect(result).to.be.undefined()
   })
 
   // Token
   it('Token', () => {
     const result = parseAll({ type: 'token' })
-    expect(result).to.be.null()
+    expect(result).to.be.undefined()
   })
 
   it('Token: new', () => {
@@ -51,7 +51,7 @@ experiment('tellstick/parse.js', () => {
 
   it('Sensors: unknown', () => {
     const result = parseAll({ type: 'sensors', id: 1, command: 'unknown' })
-    expect(result).to.be.null()
+    expect(result).to.be.undefined()
   })
 
   // Devices
@@ -82,6 +82,6 @@ experiment('tellstick/parse.js', () => {
 
   it('Devices: unknown', () => {
     const result = parseAll({ type: 'devices', id: 1, command: 'unknown' })
-    expect(result).to.be.null()
+    expect(result).to.be.undefined()
   })
 })

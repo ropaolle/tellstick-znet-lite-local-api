@@ -9,6 +9,7 @@ const DEFAULT_DB = {
   port: 4000,
   app: {
     favorites: [],
+    maxMin: {},
     'authUrl': '',
     'requestToken': '',
     'expires': 0,
@@ -24,7 +25,7 @@ let jsonDb
 module.exports.init = async function init (filename, defaultDb) {
   if (!jsonDb) {
     adapter = new FileAsync(filename || DATABASE_FILE)
-    jsonDb = await low(adapter).catch((err) => console.log('Error', err))
+    jsonDb = await low(adapter).catch((err) => console.log('Error jsonDb', err))
 
     if (!defaultDb) {
       // Create file and load defalts if db file is missing

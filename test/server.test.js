@@ -14,11 +14,19 @@ const DEFAULT_DB = {
   port: 4000,
   app: {
     favorites: [3, 4],
+    maxMin: {},
     'authUrl': 'a',
     'requestToken': 'b',
     'expires': 666,
     'accessToken': 'c',
     'allowRenew': false
+  },
+  history: {
+    '1521281680108': [
+      {
+        'temp': '26.8'
+      }
+    ]
   }
 }
 
@@ -85,6 +93,12 @@ experiment('server.js', () => {
   it('Call /api/v1/token?command=refresh -> 200', async () => {
     const response = await server.inject({ method: 'GET', url: '/api/v1/token?command=refresh' })
     expect(response.result.error).to.exist()
+  })
+
+  it('Call /api/v1/history -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/history' })
+    console.log(response.result)
+    expect(response.result).to.equal('Saved records: 1')
   })
 })
 

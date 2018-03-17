@@ -9,7 +9,6 @@ module.exports = {
 
     const keys = Object.keys(history)
     const items = keys.map(val => new Date(Number(val)))
-    // console.log(items.length)
 
     return h.response(`Saved records: ${items.length}`)
   }
