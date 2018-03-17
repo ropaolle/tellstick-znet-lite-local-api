@@ -26,7 +26,7 @@ function indexedById (devices, addParams) {
 
 function removeSensorsFromDeviceList (devices, sensors) {
   return devices.filter(
-    device => sensors.find(sensor => sensor.id !== device.id)
+    device => sensors.every(sensor => sensor.id !== device.id)
   )
 }
 
