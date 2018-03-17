@@ -7,42 +7,77 @@ const difference = require('./differense')
 const jsonDb = require('./database')
 const { tellstickApi } = require('../tellstick/proxy')
 
-let prevMessage
+let PREV_MESSAGE
 
 // '* */5 * * * *' Every 5'th min
 // '*/3 * * * * *' Every 3'rd sec
 const job = new CronJob({
-  cronTime: '* */5 * * * *',
+  cronTime: '*/10 * * * * *',
   onTick: tick,
   start: false
 })
 
+function updateMinMax (message, db) {
+  const minMaxObj = db.get('app.minMax').value()
+
+  message.sensor.forEach(sensor => {
+    const minMax = minMaxObj[sensor.id]
+    const { temp } = sensor
+    const update = { temp: sensor.temp, updated: Date.now() }
+    let updatedMinMax
+
+    // Add if missing
+    if (!minMax) {
+      updatedMinMax = { min: update, max: update }
+    // Update min
+    } else if (temp < minMax.min.temp) {
+      updatedMinMax = { ...minMax, min: update }
+    // Update max
+    } else if (temp > minMax.max.temp) {
+      updatedMinMax = { ...minMax, max: update }
+    }
+
+    if (updatedMinMax) {
+      db.set(`app.minMax.${sensor.id}`, updatedMinMax).write()
+    }
+  })
+}
+
+function updateHistory (messageToKeep, db) {
+  if (!PREV_MESSAGE) {
+    // Store a complete copy of the first message.
+    db.set(`history.${Date.now()}`, messageToKeep).write()
+  } else {
+    // Store the diff if the massage is changed
+    const messageDiff = difference(messageToKeep, PREV_MESSAGE)
+    if (!isEmpty(messageDiff)) {
+      // console.log('DIFF MSG', messageDiff)
+      db.set(`history.${Date.now()}`, messageDiff).write()
+    }
+  }
+}
+
 async function tick () {
   try {
-    const { success, message } = await tellstickApi({ type: 'sensors' })
-    // console.log('tellstickApi', success, message, error)
+    const { success, message, error } = await tellstickApi({ type: 'sensors' })
+
+    if (error) {
+      return console.log('Error API History', error)
+    }
 
     if (success) {
       // Exclude model, name, protocol, sensorId
       const messageToKeep = message.sensor.map(({ model, name, protocol, sensorId, ...keep }) => keep)
       const db = jsonDb.db()
 
-      // Store a complete copy of the first message. Else, if changed store a diff.
-      if (!prevMessage) {
-        // console.log('FULL MSG', message)
-        db.set(`history.${Date.now()}`, messageToKeep).write()
-      } else {
-        const messageDiff = difference(messageToKeep, prevMessage)
-        if (!isEmpty(messageDiff)) {
-          // console.log('DIFF MSG', messageDiff)
-          db.set(`history.${Date.now()}`, messageDiff).write()
-        }
-      }
+      updateMinMax(message, db)
 
-      prevMessage = messageToKeep
+      updateHistory(messageToKeep, db)
+
+      PREV_MESSAGE = messageToKeep
     }
   } catch (err) {
-    console.log('Error API History', err)
+    return console.log('Error API History', err)
   }
 }
 

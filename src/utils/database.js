@@ -9,6 +9,7 @@ const DEFAULT_DB = {
   port: 4000,
   app: {
     favorites: [],
+    maxMin: {},
     'authUrl': '',
     'requestToken': '',
     'expires': 0,

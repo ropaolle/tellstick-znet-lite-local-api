@@ -2,13 +2,23 @@
 
 const { tellstickApi } = require('../tellstick/proxy')
 
-// Convert array to object, index by id and add favorites and type
-function addFavoritesTypeAndIndexedById (devices, favorites, type = null) {
+const addDeviceParams = favorites => deviceId =>
+  ({ favorite: favorites.indexOf(deviceId) !== -1 })
+
+const addSensorParams = (favorites, type, minMax) => deviceId => {
+  return {
+    favorite: favorites.indexOf(deviceId) !== -1,
+    type,
+    minMax: minMax[deviceId]
+  }
+}
+
+// Convert array to object and index by id
+function indexedById (devices, addParams) {
   return devices.reduce((acc, device) => {
     acc[device.id] = {
       ...device,
-      type: type || device.type,
-      favorite: favorites.indexOf(device.id) !== -1
+      ...addParams(device.id)
     }
     return acc
   }, {})
@@ -24,26 +34,28 @@ module.exports = {
   method: 'GET',
   path: '/api/v1/init',
   handler: async (request, h) => {
-    // Load data from db
-    const db = request.db()
-    const favorites = db.get('app.favorites').value()
-
     // Get data from Tellstick
     const deviceData = await tellstickApi({ type: 'devices' })
     const sensorData = await tellstickApi({ type: 'sensors' })
 
+    // Load data from db
+    const db = request.db()
+    const { favorites, allowRenew, expires, minMax = [] } = db.get('app').value()
+
     const response = {
       success: deviceData.success && sensorData.success,
       error: deviceData.error || sensorData.error, // Only displays the first error
-      allowRenew: db.get('app.allowRenew').value(),
-      expires: db.get('app.expires').value()
+      allowRenew,
+      expires
     }
 
     if (deviceData.success && sensorData.success) {
       let sensors = sensorData.message.sensor
       let devices = removeSensorsFromDeviceList(deviceData.message.device, sensors)
-      response.devices = addFavoritesTypeAndIndexedById(devices, favorites)
-      response.sensors = addFavoritesTypeAndIndexedById(sensors, favorites, 'sensor')
+      response.devices = indexedById(devices, addDeviceParams(favorites))
+      response.sensors = indexedById(sensors, addSensorParams(favorites, 'sensor', minMax))
+
+      console.log(response.sensors)
     }
 
     return h.response(response)
