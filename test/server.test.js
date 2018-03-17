@@ -45,8 +45,8 @@ experiment('server.js', () => {
     expect(response.result.error).to.exist()
   })
 
-  it('Call /api/v1/devices/1 -> 200', async () => {
-    const response = await server.inject({ method: 'GET', url: '/api/v1/devices/1' })
+  it('Call /api/v1/devices?id=1 -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/devices?id=1' })
     expect(response.result.error).to.equal('Unknown command!')
   })
 
@@ -55,13 +55,13 @@ experiment('server.js', () => {
     expect(response.result.error).to.exist()
   })
 
-  it('Call /api/v1/favorites/3 -> 200', async () => {
-    const response = await server.inject({ method: 'GET', url: '/api/v1/favorites/3' })
+  it('Call /api/v1/favorites?id=3 -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/favorites?id=3' })
     expect(response.result.favorites).to.equal([4])
   })
 
-  it('Call /api/v1/favorites/100 -> 200', async () => {
-    const response = await server.inject({ method: 'GET', url: '/api/v1/favorites/100' })
+  it('Call /api/v1/favorites?id=100 -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/favorites?id=100' })
     expect(response.result.favorites).to.equal([4, 100])
   })
 
