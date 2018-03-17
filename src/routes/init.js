@@ -37,7 +37,6 @@ module.exports = {
     // Get data from Tellstick
     const deviceData = await tellstickApi({ type: 'devices' })
     const sensorData = await tellstickApi({ type: 'sensors' })
-    console.log(deviceData)
 
     // Load data from db
     const db = request.db()
