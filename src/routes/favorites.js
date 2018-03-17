@@ -2,13 +2,14 @@
 
 module.exports = {
   method: 'GET',
-  path: '/api/v1/favorites/{id}',
+  path: '/api/v1/favorites',
   handler: async (request, h) => {
     const db = request.db()
     const favorites = db.get('app.favorites').value()
 
-    const id = Number(request.params.id)
     const set = new Set(favorites)
+    const id = Number(request.query.id)
+
     if (set.has(id)) {
       set.delete(id)
     } else {
