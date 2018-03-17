@@ -54,8 +54,6 @@ module.exports = {
       let devices = removeSensorsFromDeviceList(deviceData.message.device, sensors)
       response.devices = indexedById(devices, addDeviceParams(favorites))
       response.sensors = indexedById(sensors, addSensorParams(favorites, 'sensor', minMax))
-
-      console.log(response.sensors)
     }
 
     return h.response(response)

@@ -42,7 +42,6 @@ module.exports = {
       // Do not expose token to browser
       delete result.message.token
     }
-    // console.log('R', result)
 
     return h.response(result)
   }

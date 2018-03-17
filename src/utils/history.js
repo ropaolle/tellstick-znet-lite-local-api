@@ -51,7 +51,6 @@ function updateHistory (messageToKeep, db) {
     // Store the diff if the massage is changed
     const messageDiff = difference(messageToKeep, PREV_MESSAGE)
     if (!isEmpty(messageDiff)) {
-      // console.log('DIFF MSG', messageDiff)
       db.set(`history.${Date.now()}`, messageDiff).write()
     }
   }

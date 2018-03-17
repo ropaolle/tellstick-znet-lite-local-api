@@ -40,7 +40,6 @@ const DEFAULT_REPLY = { success: false, error: null, message: null }
 module.exports.tellstickApi = async function tellstickApi (request) {
   const url = tellstick.parseAll(request)
 
-  // console.log('tellstickApi', url, request)
   if (!url) {
     return { ...DEFAULT_REPLY, error: 'Unknown command!' }
   }
