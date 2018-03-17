@@ -1,7 +1,7 @@
 ## Todo
 
 * [ ] Store history someware else, firestore?
-* [ ] Add history to client (prod + demo)
+* [ ] Add history cleanup function
 * [ ] Sparklines https://github.com/borisyankov/react-sparklines
 
 ## Tellstick

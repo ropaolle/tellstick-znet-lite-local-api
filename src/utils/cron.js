@@ -9,15 +9,23 @@ const { tellstickApi } = require('../tellstick/proxy')
 
 let PREV_MESSAGE
 
+// '* 15 * * * *' Every hour + 15 min
 // '* */5 * * * *' Every 5'th min
 // '*/3 * * * * *' Every 3'rd sec
-const job = new CronJob({
-  cronTime: '*/10 * * * * *',
-  onTick: tick,
+module.exports.minMax = new CronJob({
+  cronTime: '* */5 * * * *',
+  onTick: () => tick({ minMax: true }),
   start: false
 })
 
-function updateMinMax (message, db) {
+module.exports.history = new CronJob({
+  cronTime: '* 15 * * * *',
+  onTick: () => tick({ history: true }),
+  start: false
+})
+
+function updateMinMax (message) {
+  const db = jsonDb.db()
   const minMaxObj = db.get('app.minMax').value()
 
   message.sensor.forEach(sensor => {
@@ -43,7 +51,11 @@ function updateMinMax (message, db) {
   })
 }
 
-function updateHistory (messageToKeep, db) {
+function updateHistory (message) {
+  // Exclude model, name, protocol, sensorId
+  const messageToKeep = message.sensor.map(({ model, name, protocol, sensorId, ...keep }) => keep)
+  const db = jsonDb.db()
+
   if (!PREV_MESSAGE) {
     // Store a complete copy of the first message.
     db.set(`history.${Date.now()}`, messageToKeep).write()
@@ -54,30 +66,21 @@ function updateHistory (messageToKeep, db) {
       db.set(`history.${Date.now()}`, messageDiff).write()
     }
   }
+
+  PREV_MESSAGE = messageToKeep
 }
 
-async function tick () {
+async function tick ({ minMax = false, history = false }) {
   try {
     const { success, message, error } = await tellstickApi({ type: 'sensors' })
 
-    if (error) {
+    if (!success) {
       return console.log('Error API History', error)
     }
 
-    if (success) {
-      // Exclude model, name, protocol, sensorId
-      const messageToKeep = message.sensor.map(({ model, name, protocol, sensorId, ...keep }) => keep)
-      const db = jsonDb.db()
-
-      updateMinMax(message, db)
-
-      updateHistory(messageToKeep, db)
-
-      PREV_MESSAGE = messageToKeep
-    }
+    if (minMax) { updateMinMax(message) }
+    if (history) { updateHistory(message) }
   } catch (err) {
     return console.log('Error API History', err)
   }
 }
-
-module.exports = job

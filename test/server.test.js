@@ -40,23 +40,13 @@ lab.after(async () => {
 })
 
 experiment('server.js', () => {
-  it('Call /api/v1/ping - valid api verion', async () => {
-    const response = await server.inject({ method: 'GET', url: '/api/v1/ping' })
-    expect(response.result.message).to.equal('pong')
-  })
-
-  it('Call /api/v1/ping - invalid api version', async () => {
-    const response = await server.inject({ method: 'GET', url: '/api/v2/ping' })
-    expect(response.statusCode).to.equal(404)
-  })
-
   it('Call /api/v1/devices -> 200', async () => {
     const response = await server.inject({ method: 'GET', url: '/api/v1/devices' })
     expect(response.result.error).to.exist()
   })
 
-  it('Call /api/v1/devices/1 -> 200', async () => {
-    const response = await server.inject({ method: 'GET', url: '/api/v1/devices/1' })
+  it('Call /api/v1/devices?id=1 -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/devices?id=1' })
     expect(response.result.error).to.equal('Unknown command!')
   })
 
@@ -65,13 +55,13 @@ experiment('server.js', () => {
     expect(response.result.error).to.exist()
   })
 
-  it('Call /api/v1/favorites/3 -> 200', async () => {
-    const response = await server.inject({ method: 'GET', url: '/api/v1/favorites/3' })
+  it('Call /api/v1/favorites?id=3 -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/favorites?id=3' })
     expect(response.result.favorites).to.equal([4])
   })
 
-  it('Call /api/v1/favorites/100 -> 200', async () => {
-    const response = await server.inject({ method: 'GET', url: '/api/v1/favorites/100' })
+  it('Call /api/v1/favorites?id=100 -> 200', async () => {
+    const response = await server.inject({ method: 'GET', url: '/api/v1/favorites?id=100' })
     expect(response.result.favorites).to.equal([4, 100])
   })
 
@@ -97,8 +87,7 @@ experiment('server.js', () => {
 
   it('Call /api/v1/history -> 200', async () => {
     const response = await server.inject({ method: 'GET', url: '/api/v1/history' })
-    console.log(response.result)
-    expect(response.result).to.equal('Saved records: 1')
+    expect(response.result.message).to.equal('Saved records: 1')
   })
 })
 
