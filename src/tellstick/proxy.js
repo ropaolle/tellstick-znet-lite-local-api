@@ -35,7 +35,7 @@ function getHeaders ({ type, command }) {
   }
 }
 
-const DEFAULT_REPLY = { success: false, error: null, message: null }
+const DEFAULT_REPLY = { success: false }
 
 module.exports.tellstickApi = async function tellstickApi (request) {
   const url = tellstick.parseAll(request)
@@ -54,8 +54,8 @@ module.exports.tellstickApi = async function tellstickApi (request) {
 
     return {
       success: !body.error,
-      message: body.error ? null : body,
-      error: body.error ? body.error : null
+      message: body.error ? undefined : body,
+      error: body.error ? body.error : undefined
     }
   } catch (err) {
     return { ...DEFAULT_REPLY, error: err.message }
