@@ -7,7 +7,7 @@ const { db } = require('../utils/database')
 
 const wreck = Wreck.defaults({
   timeout: 1000,
-  baseUrl: 'http://192.168.10.163/api/' // DHCP Static IP-mapping: TellStick-ZNet-Lite ac:ca:54:01:a9:93 192.168.10.163
+  baseUrl: 'http://192.168.10.50/api/' // DHCP Static IP-mapping: TellStick-ZNet-Lite ac:ca:54:01:a9:93 192.168.10.163
 })
 
 function getHeaders ({ type, command }) {
